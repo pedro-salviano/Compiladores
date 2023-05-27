@@ -45,7 +45,7 @@ public class Principal {
                     } else if (nomeToken.equals("OP_COMPR")){ //confere se o token eh ou faz parte de um simbolo de operador logico
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
                     } else { //se nenhum dos casos acima for verdadeiro, o token nao faz parte de nenhuma palavra ou algorismo reservado
-                        //portanto, eh um
+                        //portanto, eh uma variavel ou digito
                         pw.println("<'" + t.getText() + "'," + nomeToken + ">");
                     }
                 }
