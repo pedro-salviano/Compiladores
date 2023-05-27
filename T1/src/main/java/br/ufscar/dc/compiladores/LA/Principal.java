@@ -52,7 +52,7 @@ public class Principal {
             }catch(FileNotFoundException fnfe) { //erro gerado quando o arquivo nao eh encontrado
                 System.err.println("O arquivo/diretório não existe:"+args[1]);
             }
-        } catch (IOException e) {
+        } catch (IOException e) { //se nao consegue encontrar o arquivo saida (argumento 1) ou nao consegue ler o arquivo de entrada, ele para o programa
             e.printStackTrace();
         }
     }
