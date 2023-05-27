@@ -1,47 +1,39 @@
 lexer grammar LA;
 
-PALAVRA_CHAVE:
+PALAVRA_CHAVE: //separa palavras chaves que nao podem ser utilizadas para outro proposito
     'algoritmo' | 'declare' | 'literal' | 'inteiro' | 'leia' | 'escreva' | 'fim_algoritmo' 
     | 'real' | '<-' | 'logico' | 'se' | 'entao' | 'senao' | 'fim_se' | 'caso' 
     | 'seja' | '..' | 'fim_caso' | 'para' | 'ate' | 'faca' | 'fim_para' | 'enquanto' | 'fim_enquanto' 
     | '%' | '^' | 'registro' | 'fim_registro' | '.' | 'tipo' | 'procedimento' | 'var' | 'fim_procedimento' 
     | 'funcao' | 'retorne' | 'fim_funcao' | 'constante' | 'falso' | 'verdadeiro' | 'e' | 'ou' | 'nao' | '&' ;
 
-IDENT:    [a-zA-Z][a-zA-Z0-9_]*;
+IDENT:    [a-zA-Z][a-zA-Z0-9_]*; //define os tokens aceitos para um identificador, e define que eles nao podem comecar com numero
 
-OP_ARIT	:	'*' | '/' | '+' | '-';
+OP_ARIT	:	'*' | '/' | '+' | '-'; //define os tokens que denotam operadores artimeticos
 
-OP_REL	:	'<' | '<=' | '>=' | '>' | '=' | '<>';
+OP_REL	:	'<' | '<=' | '>=' | '>' | '=' | '<>'; //define os tokens que denotam operadores relacionais
 
-OP_Log1:   'e';
+OP_COMPR:   'e' | 'ou' | 'nao' | '&'; //define os tokens que denotam operadores logicos
 
-OP_Log2:    'ou';
+DELIM:	':'; //token que denota o fim de um argumento
 
-OP_Log3:    'nao';
+AP:	'('; //abre parenteses
 
-OP_Log4:    '&';
-
-DELIM:	':';
-
-AP:	'(';
-
-FP:	')';
+FP:	')'; //fecha parenteses
 
 VIRGULA :   ',';
 
-AC: '[';
-FC: ']'; 
+AC: '['; //abre colchete
+FC: ']'; //fecha colchete
 
 fragment
-DIGITO: ('0'..'9');
+DIGITO: ('0'..'9'); //define que digitos so podem ser compostos por numeros
 
-NUM_INT:    DIGITO+;
+NUM_INT:    DIGITO+; //numeros inteiros nao tem virgula
 
-NUM_REAL:   DIGITO+ '.' DIGITO+;
+NUM_REAL:   DIGITO+ '.' DIGITO+; //numeros reais tem virgula
 
-
-
-CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"');
+CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); 
 
 fragment
 ESC_SEQ:    '\\\'';
