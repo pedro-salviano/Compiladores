@@ -37,7 +37,7 @@ CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); // cadeias
             // e fechar as aspas simples ou dupla para serem validas
 
 fragment
-ESC_SEQ:    '\\\''; 
+ESC_SEQ:    '\\\''; //aspas e barra
 
 COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario deve ser iniciado com {, que nao pode conter \n, \r e } dentro dele,
     // e deve ser fechado com }
@@ -51,4 +51,4 @@ WS: (' '|'\t'|'\r'|'\n') { skip(); };
 CADEIA_NAO_FECHADA:  ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* '\n'; // uma cadeia nao fechada eh aquela que abre as aspas
            // simples ou dupla, mas nao as fecha
 COMENTARIO_NAO_FECHADO: '{' ~('}' | '\n' | '\r')* ('\r' | '\n'); //um comentario nao fechado eh aquele que abre uma chave, mas nao a fecha
-ERRO: .;
+ERRO: .; 
