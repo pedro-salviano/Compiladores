@@ -7,7 +7,7 @@ Melissa Campelo Amora Fontenelle - RA: 769824
 
 Nayra Kaline Santos Vidal - RA: 769847
 
-Pedro Salviano - RA
+Pedro Augusto Benevides Salviano - RA: 790983
 
 # README
 
