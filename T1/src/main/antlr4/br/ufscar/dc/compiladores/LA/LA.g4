@@ -21,7 +21,7 @@ AP:	'('; //abre parenteses
 
 FP:	')'; //fecha parenteses
 
-VIRGULA :   ',';
+VIRGULA :   ','; //virgula eh so uma virgula
 
 AC: '['; //abre colchete
 FC: ']'; //fecha colchete
@@ -37,14 +37,18 @@ CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); // cadeias
             // e fechar as aspas simples ou dupla para serem validas
 
 fragment
-ESC_SEQ:    '\\\'';
+ESC_SEQ:    '\\\''; 
 
-COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario 
+COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario deve ser iniciado com {, que nao pode conter \n, \r e } dentro dele,
+    // e deve ser fechado com }
 
 WS: (' '|'\t'|'\r'|'\n') { skip(); };
+    // \n pula para a proxima linha
+    // \r move o cursor para o comeco da linha
+    // \t insere um tab
 
 
 CADEIA_NAO_FECHADA:  ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* '\n'; // uma cadeia nao fechada eh aquela que abre as aspas
-           // simples ou dupla, mas nao fecha
-COMENTARIO_NAO_FECHADO: '{' ~('}' | '\n' | '\r')* ('\r' | '\n');
+           // simples ou dupla, mas nao as fecha
+COMENTARIO_NAO_FECHADO: '{' ~('}' | '\n' | '\r')* ('\r' | '\n'); //um comentario nao fechado eh aquele que abre uma chave, mas nao a fecha
 ERRO: .;
