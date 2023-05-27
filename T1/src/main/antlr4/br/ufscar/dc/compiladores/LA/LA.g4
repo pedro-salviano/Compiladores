@@ -33,16 +33,18 @@ NUM_INT:    DIGITO+; //numeros inteiros nao tem virgula
 
 NUM_REAL:   DIGITO+ '.' DIGITO+; //numeros reais tem virgula
 
-CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); 
+CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); // cadeias devem ser iniciadas por ' ou ", ter o finalizador (ex: \n),
+            // e fechar as aspas simples ou dupla para serem validas
 
 fragment
 ESC_SEQ:    '\\\'';
 
-COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); };
+COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario 
 
 WS: (' '|'\t'|'\r'|'\n') { skip(); };
 
 
-CADEIA_NAO_FECHADA:  ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* '\n';
+CADEIA_NAO_FECHADA:  ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* '\n'; // uma cadeia nao fechada eh aquela que abre as aspas
+           // simples ou dupla, mas nao fecha
 COMENTARIO_NAO_FECHADO: '{' ~('}' | '\n' | '\r')* ('\r' | '\n');
 ERRO: .;
