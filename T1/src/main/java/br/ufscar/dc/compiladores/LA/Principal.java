@@ -32,20 +32,15 @@ public class Principal {
                     } else if(nomeToken.equals("COMENTARIO_NAO_FECHADO")) {
                         pw.println("Linha " + t.getLine() + ": comentario nao fechado");
                         break;
-                    }
-                    else if (nomeToken.equals("PALAVRA_CHAVE")){
+                    } else if (nomeToken.equals("PALAVRA_CHAVE")){
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_ARIT")){
+                    } else if (nomeToken.equals("OP_ARIT")){
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_REL")){
+                    } else if (nomeToken.equals("OP_REL")){
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_COMPR")){
+                    } else if (nomeToken.equals("OP_Log1") || nomeToken.equals("OP_Log2") || nomeToken.equals("OP_Log3") || nomeToken.equals("OP_Log4")){
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else {
+                    } else {
                         pw.println("<'" + t.getText() + "'," + nomeToken + ">");
                     }
                 }
