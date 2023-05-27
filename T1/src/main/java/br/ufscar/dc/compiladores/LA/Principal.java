@@ -37,17 +37,13 @@ public class Principal {
                     }
                     else if (nomeToken.equals("PALAVRA_CHAVE")){ //confere se o token faz parte de uma palavra chave
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_ARIT")){ //confere se o token eh um simbolo de operador aritmetico
+                    } else if (nomeToken.equals("OP_ARIT")){ //confere se o token eh um simbolo de operador aritmetico
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_REL")){ //confere se o token eh ou faz parte de um simbolo de operador relacional
+                    } else if (nomeToken.equals("OP_REL")){ //confere se o token eh ou faz parte de um simbolo de operador relacional
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else if (nomeToken.equals("OP_COMPR")){ //confere se o token eh ou faz parte de um simbolo de operador logico
+                    } else if (nomeToken.equals("OP_COMPR")){ //confere se o token eh ou faz parte de um simbolo de operador logico
                         pw.println("<'" + t.getText() + "','" + t.getText() + "'>");
-                    }
-                    else { //se nenhum dos casos acima for verdadeiro, o token nao faz parte de nenhuma palavra ou algorismo reservado
+                    } else { //se nenhum dos casos acima for verdadeiro, o token nao faz parte de nenhuma palavra ou algorismo reservado
                         //portanto, eh um
                         pw.println("<'" + t.getText() + "'," + nomeToken + ">");
                     }
