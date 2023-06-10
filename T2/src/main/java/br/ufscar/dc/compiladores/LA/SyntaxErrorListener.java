@@ -1,6 +1,5 @@
 package br.ufscar.dc.compiladores.LA;
 
-import java.io.PrintWriter;
 import java.util.BitSet;
 
 import org.antlr.v4.runtime.ANTLRErrorListener; // cuidado para importar a versão 4
@@ -10,12 +9,9 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token; 
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class SyntaxErrorListener implements ANTLRErrorListener {
-    PrintWriter pw;
-    public SyntaxErrorListener(PrintWriter pw){
-        this.pw = pw;
-    }
 
     @Override
     public void	reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
@@ -38,7 +34,7 @@ public class SyntaxErrorListener implements ANTLRErrorListener {
 
         Token t = (Token) offendingSymbol;
 
-        pw.println("Minha mensagem customizada: Erro na linha "+line+", o token é "+t.getText());
+        throw new ParseCancellationException("Linha " + line + ": erro sintatico proximo a " + (t.getText().equals("<EOF>") ? "EOF" : t.getText()) );
     }
 
 }

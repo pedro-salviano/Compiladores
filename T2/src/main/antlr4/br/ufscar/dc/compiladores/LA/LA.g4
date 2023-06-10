@@ -19,7 +19,6 @@ COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario deve ser
     // e deve ser fechado com }
 
 COMENTARIO_NAO_FECHADO: '{' ~('}' | '\n' | '\r')* ('\r' | '\n'); //um comentario nao fechado eh aquele que abre uma chave, mas nao a fecha
-ERRO: .; 
 
 OP_ARIT	:	'*' | '/' | '+' | '-'; //define os tokens que denotam operadores artimeticos
 
