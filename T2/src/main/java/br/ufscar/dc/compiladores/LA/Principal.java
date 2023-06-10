@@ -22,19 +22,17 @@ public class Principal {
                 try{
                     LALexer lex = new LALexer(cs); //define o lexico como a LA
 
-                    lex.removeErrorListeners();
-                    LexerErrorListener mc_Lex_el = new LexerErrorListener();
-                    lex.addErrorListener(mc_Lex_el);
+                    lex.removeErrorListeners(); //limpa listeners para que não ocorra duplicidade
+                    LexerErrorListener mc_Lex_el = new LexerErrorListener(); //Inicializa o listener lexico
+                    lex.addErrorListener(mc_Lex_el);    //Adiciona o listener lexico ao listeners
 
-                    lex.reset();
-                    CommonTokenStream tokens = new CommonTokenStream(lex);
-                    LAParser parser = new LAParser(tokens);
+                    CommonTokenStream tokens = new CommonTokenStream(lex);  // Inicializa a classe que permite análise dos tokens lexicos
+                    LAParser parser = new LAParser(tokens); // Inicializa o parser semantico, com os tokens
 
-                    parser.removeErrorListeners();
-                    SyntaxErrorListener mcel = new SyntaxErrorListener();
-                    parser.addErrorListener(mcel);
+                    SyntaxErrorListener mcel = new SyntaxErrorListener();   //Inicializa o listener sintatico
+                    parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
-                    parser.programa();
+                    parser.programa();  //Executa a analise sintatica, construindo arvore
                 }   catch (ParseCancellationException e){
                     pw.println(e.getMessage());
                     pw.println("Fim da compilacao");
