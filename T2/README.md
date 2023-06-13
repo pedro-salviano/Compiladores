@@ -23,12 +23,12 @@ Para criar o *.jar* execute o comando a baixo na raiz do projeto.
 mvn package
 ```
 Então o *.jar* estará disponível na pasta target.
-Nomeado *LA-1.2-jar-with-dependencies.jar*. 
+Nomeado *LA-1.2-SNAPSHOT-jar-with-dependencies.jar*. 
 
 ## Como executar
 Após criar o *.jar* execute-o terminal com parâmetros input e output sendo respectivamente os arquivos de entrada para teste e saida 
 obtida, e.g.:
 ```
-java -jar  LA-1.2-jar-with-dependencies.jar <input> <output>
+java -jar  LA-1.2-SNAPSHOT-jar-with-dependencies.jar <input> <output>
 ```
 O arquivo em input deve ser um arquivo válido.
