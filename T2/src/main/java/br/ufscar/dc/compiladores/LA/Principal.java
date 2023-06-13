@@ -6,9 +6,9 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class Principal {
@@ -21,18 +21,35 @@ public class Principal {
             try (PrintWriter pw = new PrintWriter(arquivoSaida)) { //permite escrita em arquivo
                 try{
                     LALexer lex = new LALexer(cs); //define o lexico como a LA
+                    Token t = null;
+                    boolean procede = true;
+                    while ((t = lex.nextToken()).getType() != Token.EOF && procede) {
+                        String nomeToken = LALexer.VOCABULARY.getDisplayName(t.getType());
 
-                    lex.removeErrorListeners(); //limpa listeners para que não ocorra duplicidade
-                    LexerErrorListener mc_Lex_el = new LexerErrorListener(); //Inicializa o listener lexico
-                    lex.addErrorListener(mc_Lex_el);    //Adiciona o listener lexico ao listeners
+                        if(nomeToken.equals("ERRO")) { //simbolo nao identificado
+                            procede = false;
+                            throw new ParseCancellationException("Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado");
+                            
+                        } else if(nomeToken.equals("CADEIA_NAO_FECHADA")) { //falta o fecha aspas
+                            procede = false;
+                            throw new ParseCancellationException("Linha " + t.getLine() + ": cadeia literal nao fechada");
+                            
+                        } else if(nomeToken.equals("COMENTARIO_NAO_FECHADO")) { // comentario nao fechado
+                            procede = false;
+                            throw new ParseCancellationException("Linha " + t.getLine() + ": comentario nao fechado");
+                            
+                        }
+                    }
+                    if(procede){
+                        lex.reset();
+                        CommonTokenStream tokens = new CommonTokenStream(lex); 
+                        LAParser parser = new LAParser(tokens); // Inicializa o parser semantico, com os tokens
+                        SyntaxErrorListener mcel = new SyntaxErrorListener();   //Inicializa o listener sintatico
+                        parser.removeErrorListeners();
+                        parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
-                    CommonTokenStream tokens = new CommonTokenStream(lex);  // Inicializa a classe que permite análise dos tokens lexicos
-                    LAParser parser = new LAParser(tokens); // Inicializa o parser semantico, com os tokens
-
-                    SyntaxErrorListener mcel = new SyntaxErrorListener();   //Inicializa o listener sintatico
-                    parser.addErrorListener(mcel);    //Adiciona o listener sintatico
-
-                    parser.programa();  //Executa a analise sintatica, construindo arvore
+                        parser.programa();  //Executa a analise sintatica, construindo arvore
+                    }
                 }   catch (ParseCancellationException e){
                     pw.println(e.getMessage());
                     pw.println("Fim da compilacao");

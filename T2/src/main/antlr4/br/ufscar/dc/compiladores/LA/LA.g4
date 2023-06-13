@@ -49,6 +49,7 @@ WS: (' '|'\t'|'\r'|'\n') { skip(); };
     // \r move o cursor para o comeco da linha
     // \t insere um tab
 
+ERRO: .; 
 
 //  Syntax for T2
 
