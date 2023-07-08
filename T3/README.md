@@ -1,4 +1,4 @@
-# Trabalho 2 - Analisador Sintático
+# Trabalho 3 - Analisador Semântico
 
 Grupo:
 
@@ -9,7 +9,7 @@ Nayra Kaline Santos Vidal - RA: 769847
 Pedro Augusto Benevides Salviano - RA: 790983
 
 ## Dependencias
-- OpenJDK (>= 19)
+- OpenJDK (>= 11)
 - Antlr4 (>= 4.10.1)
 - Maven (>= 3.6.3)
 

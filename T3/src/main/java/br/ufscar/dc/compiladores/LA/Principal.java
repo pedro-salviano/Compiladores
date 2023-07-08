@@ -48,7 +48,16 @@ public class Principal {
                         parser.removeErrorListeners();
                         parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
-                        parser.programa();  //Executa a analise sintatica, construindo arvore
+                        var programa = parser.programa();  //Executa a analise sintatica, construindo arvore
+                        LAvisitor semantic = new LAvisitor();
+                        semantic.visitPrograma(programa);
+
+                        if(!LASemanticUtils.semanticErrors.isEmpty()){
+                            for(var s: LASemanticUtils.semanticErrors){
+                                pw.write(s);
+                            }
+                            pw.write("Fim da compilacao\n");
+                        }
                     }
                 }   catch (ParseCancellationException e){
                     pw.println(e.getMessage());
