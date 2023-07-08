@@ -53,7 +53,7 @@ public class Principal {
                         LAvisitor semantic = new LAvisitor(); //Adiciona o Visitor Semântico
                         semantic.visitPrograma(programa); //Executa a análise semântica
 
-                        if(!LASemanticUtils.semanticErrors.isEmpty()){
+                        if(!LASemanticUtils.semanticErrors.isEmpty()){ //Imprime os erros semânticos
                             for(var s: LASemanticUtils.semanticErrors){
                                 pw.write(s);
                             }
