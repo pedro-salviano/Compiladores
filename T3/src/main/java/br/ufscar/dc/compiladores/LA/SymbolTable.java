@@ -1,6 +1,5 @@
 package br.ufscar.dc.compiladores.LA;
-    
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 public class SymbolTable {

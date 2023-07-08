@@ -1,20 +1,22 @@
 package br.ufscar.dc.compiladores.LA;
 
-import br.ufscar.dc.compiladores.LA.LABaseVisitor;
-import br.ufscar.dc.compiladores.LA.LAParser;
-import br.ufscar.dc.compiladores.LA.LAParser.Declaracao_globalContext;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
-import java.util.ArrayList;
 
 public class LAvisitor extends LABaseVisitor<Void> {
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 
+    // visitCorpo tidies the scopes to make only
+    // the globalScope visible
     @Override
-    public Void visitPrograma(LAParser.ProgramaContext ctx) {
-        symbolTable = new SymbolTable();
-        return super.visitPrograma(ctx);
+    public Void visitCorpo(LAParser.CorpoContext ctx) {
+        var scopes = nestedScopes.runNestedScopes();
+        if (scopes.size() > 1) {
+            nestedScopes.giveupScope();
+        }
+
+        return super.visitCorpo(ctx);
     }
      
     // visitDeclaracao_local treats the declaration of variables, constants 
@@ -49,9 +51,6 @@ public class LAvisitor extends LABaseVisitor<Void> {
                         case "logico":
                             currentScope.put(identifier, SymbolTable.TypeLAIdentifier.CONSTANTE,
                                     TypeLAVariable.LOGICO);
-                            break;
-                        default:
-                            // never reached
                             break;
                     }
                 }
@@ -137,50 +136,27 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
     @Override
     public Void visitCmd(LAParser.CmdContext ctx) {
-        /* if (ctx.cmdAtribuicao() != null) {
+        if (ctx.cmdLeia() != null) {
+            var currentScope = nestedScopes.getCurrentScope();
+            for (var ident : ctx.cmdLeia().identificador()) {
+                LASemanticUtils.verifyType(currentScope, ident);
+            }
+        }
+
+        if (ctx.cmdAtribuicao() != null) {
             var currentScope = nestedScopes.getCurrentScope();
             var leftValue = LASemanticUtils.verifyType(currentScope,
                     ctx.cmdAtribuicao().identificador());
             var rightValue = LASemanticUtils.verifyType(currentScope,
                     ctx.cmdAtribuicao().expressao());
-            // for pointers
-            var atribuition = ctx.cmdAtribuicao().getText().split("<-");
-            if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
+            if (!LASemanticUtils.verifyType(leftValue, rightValue)) {
                 LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
                         "atribuicao nao compativel para " + ctx.cmdAtribuicao().identificador().getText() + "\n");
-            }
-            
-            // Type Checking
-            if (atribuition[0].contains("^"))
-                if (leftValue == SymbolTable.TypeLAVariable.PONT_INT
-                        && rightValue != SymbolTable.TypeLAVariable.INTEIRO)
-                    LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
-                            "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (leftValue == SymbolTable.TypeLAVariable.PONT_LOG
-                    && rightValue != SymbolTable.TypeLAVariable.LOGICO)
-                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (leftValue == SymbolTable.TypeLAVariable.PONT_REA
-                    && rightValue != SymbolTable.TypeLAVariable.REAL)
-                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (leftValue == SymbolTable.TypeLAVariable.PONT_LIT
-                    && rightValue != SymbolTable.TypeLAVariable.LITERAL)
-                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-        } */
-
-        if (ctx.cmdChamada() != null) {
-            var currentScope = nestedScopes.getCurrentScope();
-            var nomeFunProc = ctx.cmdChamada().IDENT().getText();
-            if (!currentScope.exists(nomeFunProc)) {
-                LASemanticUtils.addSemanticError(ctx.cmdChamada().IDENT().getSymbol(),
-                        "identificador " + nomeFunProc + " nao declarado\n");
             }
         }
 
         return super.visitCmd(ctx);
-    }
+    } 
 
 
 }
