@@ -49,8 +49,9 @@ public class Principal {
                         parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
                         var programa = parser.programa();  //Executa a analise sintatica, construindo arvore
-                        LAvisitor semantic = new LAvisitor();
-                        semantic.visitPrograma(programa);
+
+                        LAvisitor semantic = new LAvisitor(); //Adiciona o Visitor Semântico
+                        semantic.visitPrograma(programa); //Executa a análise semântica
 
                         if(!LASemanticUtils.semanticErrors.isEmpty()){
                             for(var s: LASemanticUtils.semanticErrors){

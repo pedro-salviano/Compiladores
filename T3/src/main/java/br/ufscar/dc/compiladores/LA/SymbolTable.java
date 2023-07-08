@@ -40,26 +40,7 @@ public class SymbolTable {
         ste.variableType = variableType;
         symbolTable.put(name, ste);
     }
-    /* 
-    public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc) {
-        SymbolTableEntry ste = new SymbolTableEntry();
-        ste.name = name;
-        ste.identifierType = identifierType;
-        ste.variableType = variableType;
-        ste.argsRegFunc = argsRegFunc;
-        symbolTable.put(name, ste);
-    }
-
-    public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc, String specialType) {
-        SymbolTableEntry ste = new SymbolTableEntry();
-        ste.name = name;
-        ste.identifierType = identifierType;
-        ste.variableType = variableType;
-        ste.argsRegFunc = argsRegFunc;
-        ste.specialType = specialType;
-        symbolTable.put(name, ste);
-    } */
-
+   
     // returns true or false if an identifier exists in the table
     public boolean exists(String name) {
         if(global == null) {
@@ -81,19 +62,4 @@ public class SymbolTable {
         }
     }
     
-    /* // type validation for registers and functions
-    public boolean validType(ArrayList<SymbolTable.TypeLAVariable> types){
-        int counter = 0;
-        
-        if(symbolTable.size() != types.size())
-            return false;
-        for(var entry: symbolTable.values()){
-            if(types.get(counter) != entry.variableType){
-                return false;
-            }
-            counter++;
-        }
-        
-        return true;
-    } */
 }

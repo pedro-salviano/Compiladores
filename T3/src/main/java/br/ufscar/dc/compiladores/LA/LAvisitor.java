@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.LA;
 
+
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
 
@@ -149,14 +150,23 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     ctx.cmdAtribuicao().identificador());
             var rightValue = LASemanticUtils.verifyType(currentScope,
                     ctx.cmdAtribuicao().expressao());
-            if (!LASemanticUtils.verifyType(leftValue, rightValue)) {
+            // for pointers
+            var atribuition = ctx.cmdAtribuicao().getText().split("<-");
+            if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
                 LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
                         "atribuicao nao compativel para " + ctx.cmdAtribuicao().identificador().getText() + "\n");
             }
+            
         }
 
         return super.visitCmd(ctx);
     } 
 
+    @Override
+    public Void visitExp_aritmetica(LAParser.Exp_aritmeticaContext ctx){
+        var currentScope = nestedScopes.getCurrentScope();
+        LASemanticUtils.verifyType(currentScope, ctx);
+        return super.visitExp_aritmetica(ctx);
+    }
 
 }

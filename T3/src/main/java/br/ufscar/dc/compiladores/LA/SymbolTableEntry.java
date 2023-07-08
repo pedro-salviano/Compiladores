@@ -5,7 +5,4 @@ public class SymbolTableEntry {
     public SymbolTable.TypeLAIdentifier identifierType;
     public SymbolTable.TypeLAVariable variableType;
 
-    /* SymbolTable argsRegFunc;
-    String specialType; */
-
 }

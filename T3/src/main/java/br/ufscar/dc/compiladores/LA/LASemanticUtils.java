@@ -22,6 +22,17 @@ public class LASemanticUtils {
         if (!symbolTable.exists(identifier)) {
             addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifier + " nao declarado\n");
         }
+        else{
+            SymbolTableEntry ident = symbolTable.check(identifier);
+            if (ident.variableType == SymbolTable.TypeLAVariable.INTEIRO)
+                return SymbolTable.TypeLAVariable.INTEIRO;
+            if (ident.variableType == SymbolTable.TypeLAVariable.LITERAL)
+                return SymbolTable.TypeLAVariable.LITERAL;
+            if (ident.variableType == SymbolTable.TypeLAVariable.REAL)
+                return SymbolTable.TypeLAVariable.REAL;
+            if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
+                return SymbolTable.TypeLAVariable.LOGICO;
+        }
 
         return SymbolTable.TypeLAVariable.NAO_DECLARADO;
     }
