@@ -55,59 +55,132 @@ public class LAvisitor extends LABaseVisitor<Void> {
                             break;
                     }
                 }
-            } 
+            } else {
+                switch(ctx.variavel().tipo().getText()){
+                    case "inteiro":
+                        symbolTable.put(ctx.IDENT().getText(), SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                        break;
+                    case "literal":
+                        symbolTable.put(ctx.IDENT().getText(),
+                                SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LITERAL);
+                        break;
+                    case "real":
+                        symbolTable.put(ctx.IDENT().getText(),
+                                SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.REAL);
+                        break;
+                    case "logico":
+                        symbolTable.put(ctx.IDENT().getText(),
+                                SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LOGICO);
+                        break;
+                }
+            }
         } else {
             // variable declaration
             // 'declare' variavel
-            if (ctx.variavel().tipo().registro() == null) {
-                for (var ctxIdentVariable : ctx.variavel().identificador()) {
-                    var variableIdentifier = "";
-                    for (var ident : ctxIdentVariable.IDENT())
-                        variableIdentifier += ident.getText();
-                    var currentScope = nestedScopes.getCurrentScope();
+            for (var ctxIdentVariable : ctx.variavel().identificador()) {
+                var variableIdentifier = "";
+                for (var ident : ctxIdentVariable.IDENT())
+                    variableIdentifier += ident.getText();
+                var currentScope = nestedScopes.getCurrentScope();
 
-                    // Caso o identificador da variavel ja esteja sendo usada.
-                    if (currentScope.exists(variableIdentifier)) {
-                        LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
-                                "identificador " + variableIdentifier + " ja declarado anteriormente\n");
-                    } else {
-                        var variableType = ctx.variavel().tipo().getText();
-                        switch (variableType) {
-                            case "inteiro":
-                                currentScope.put(variableIdentifier,
-                                        SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
-                                break;
-                            case "literal":
-                                currentScope.put(variableIdentifier,
-                                        SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LITERAL);
-                                break;
-                            case "real":
-                                currentScope.put(variableIdentifier,
-                                        SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.REAL);
-                                break;
-                            case "logico":
-                                currentScope.put(variableIdentifier,
-                                        SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LOGICO);
-                                break;
-                            default: 
-                                // not a basic/primitive type
-                                if (currentScope.exists(variableType) && currentScope.check(
-                                        variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO) {
-                                    if (currentScope.exists(variableIdentifier)) {
-                                        LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
-                                                "identificador "
-                                                        + variableIdentifier + " ja declarado anteriormente\n");
-                                    }
+                // Caso o identificador da variavel ja esteja sendo usada.
+                if (currentScope.exists(variableIdentifier)) {
+                    LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
+                            "identificador " + variableIdentifier + " ja declarado anteriormente\n");
+                } else {
+                    var variableType = ctx.variavel().tipo().getText();
+                    switch (variableType) {
+                        case "inteiro":
+                            currentScope.put(variableIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                            break;
+                        case "literal":
+                            currentScope.put(variableIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LITERAL);
+                            break;
+                        case "real":
+                            currentScope.put(variableIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.REAL);
+                            break;
+                        case "logico":
+                            currentScope.put(variableIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LOGICO);
+                            break;
+                        default: 
+                            // not a basic/primitive type
+                            if (currentScope.exists(variableType) && currentScope.check(
+                                    variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO) {
+                                if (currentScope.exists(variableIdentifier)) {
+                                    LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
+                                            "identificador " + variableIdentifier + " ja declarado anteriormente\n");
                                 }
+                            }
 
-                                break;
-                        }
+                            if(!currentScope.exists(variableType)){
+                                LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
+                                "tipo " + variableType + " nao declarado\n");
+                                currentScope.put(variableIdentifier,
+                                            SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                            SymbolTable.TypeLAVariable.INVALIDO);
+                            }
+
+                            break;
                     }
                 }
+            }
                 
-            } 
         }
 
         return super.visitDeclaracao_local(ctx);
     }
+
+
+    @Override
+    public Void visitCmd(LAParser.CmdContext ctx) {
+        /* if (ctx.cmdAtribuicao() != null) {
+            var currentScope = nestedScopes.getCurrentScope();
+            var leftValue = LASemanticUtils.verifyType(currentScope,
+                    ctx.cmdAtribuicao().identificador());
+            var rightValue = LASemanticUtils.verifyType(currentScope,
+                    ctx.cmdAtribuicao().expressao());
+            // for pointers
+            var atribuition = ctx.cmdAtribuicao().getText().split("<-");
+            if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
+                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + ctx.cmdAtribuicao().identificador().getText() + "\n");
+            }
+            
+            // Type Checking
+            if (atribuition[0].contains("^"))
+                if (leftValue == SymbolTable.TypeLAVariable.PONT_INT
+                        && rightValue != SymbolTable.TypeLAVariable.INTEIRO)
+                    LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
+                            "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (leftValue == SymbolTable.TypeLAVariable.PONT_LOG
+                    && rightValue != SymbolTable.TypeLAVariable.LOGICO)
+                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (leftValue == SymbolTable.TypeLAVariable.PONT_REA
+                    && rightValue != SymbolTable.TypeLAVariable.REAL)
+                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (leftValue == SymbolTable.TypeLAVariable.PONT_LIT
+                    && rightValue != SymbolTable.TypeLAVariable.LITERAL)
+                LASemanticUtils.addSemanticError(ctx.cmdAtribuicao().identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+        } */
+
+        if (ctx.cmdChamada() != null) {
+            var currentScope = nestedScopes.getCurrentScope();
+            var nomeFunProc = ctx.cmdChamada().IDENT().getText();
+            if (!currentScope.exists(nomeFunProc)) {
+                LASemanticUtils.addSemanticError(ctx.cmdChamada().IDENT().getSymbol(),
+                        "identificador " + nomeFunProc + " nao declarado\n");
+            }
+        }
+
+        return super.visitCmd(ctx);
+    }
+
+
 }

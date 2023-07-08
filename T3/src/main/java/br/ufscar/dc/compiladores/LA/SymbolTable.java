@@ -10,7 +10,8 @@ public class SymbolTable {
         INTEIRO,
         REAL,
         LOGICO,
-        NAO_DECLARADO
+        NAO_DECLARADO,
+        INVALIDO
     }
 
     public enum TypeLAIdentifier{
