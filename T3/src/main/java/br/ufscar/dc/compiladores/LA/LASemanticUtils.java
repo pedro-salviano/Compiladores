@@ -7,14 +7,18 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 
 public class LASemanticUtils {
+    //  Criação de uma lista para armazenar os erros semânticos
     public static List<String> semanticErrors = new ArrayList<>();
     
+    // Adiciona um erro semântico à lista de erros. Recebe um Token e uma 
+    // mensagem como parâmetros, obtém o número da linha do token e adiciona 
+    // o erro formatado à lista.
     public static void addSemanticError(Token t, String msg) {
         int line = t.getLine();
         semanticErrors.add(String.format("Linha %d: %s", line, msg));
     }
 
-    // Gets Symbol type from symbolTable
+    // Obtém o tipo do símbolo a partir da tabela de símbolos
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.IdentificadorContext ctx) {
         var identifier = ctx.getText();
@@ -37,7 +41,7 @@ public class LASemanticUtils {
         return SymbolTable.TypeLAVariable.NAO_DECLARADO;
     }
 
-    // verifyType in context of expression
+    // Verifica o tipo em contexto de expressão
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.ExpressaoContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -53,7 +57,7 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // verifyType in context of termoLogico
+    // Verifica o tipo em contexto de termo lógico
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable, LAParser.Termo_logicoContext ctx){
         SymbolTable.TypeLAVariable ret = null;
         for (var fL : ctx.fator_logico()){
@@ -68,13 +72,13 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // verifyType in context of logic factor
+    // Verifica o tipo em contexto de fator lógico
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.Fator_logicoContext ctx) {
         return verifyType(table, ctx.parcela_logica());
     }
 
-    // verifyType in context of logic parcel
+    // Verifica o tipo em contexto de parcela lógica
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.Parcela_logicaContext ctx) {
         if (ctx.exp_relacional() != null) {
@@ -84,7 +88,7 @@ public class LASemanticUtils {
         }
     }
 
-    // verifyType in context of relational expression
+    // Verifica o tipo em contexto de expressão relacional
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.Exp_relacionalContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -107,7 +111,7 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // verifyType in context of arithmetic expression
+    // Verifica o tipo em contexto de expressão aritmética
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.Exp_aritmeticaContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -122,8 +126,7 @@ public class LASemanticUtils {
         }
         return ret;
     }
-
-    // verifyType in context of term
+    // Verifica o tipo em contexto de termo
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.TermoContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -139,7 +142,7 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // verifyType in context of factor
+    // Verifica o tipo em contexto de fator
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.FatorContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -156,7 +159,7 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // verifyType in context of parcel
+    // Verifica o tipo em contexto de parcela
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.ParcelaContext ctx) {
 
@@ -167,7 +170,7 @@ public class LASemanticUtils {
         }
     }
 
-    // verifyType in context of unary parcel
+    // Verifica o tipo em contexto de parcela unária
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.Parcela_unarioContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
@@ -208,7 +211,7 @@ public class LASemanticUtils {
         return ret;
     }
 
-    // Checks if atribution types are valid
+    // Verifica se os tipos de atribuição são válidos
     public static boolean verifyType(SymbolTable.TypeLAVariable tipo1, SymbolTable.TypeLAVariable tipo2) {
         if (tipo1 == tipo2)
             return true;
@@ -226,7 +229,7 @@ public class LASemanticUtils {
         return true;
     }
 
-    // verifyType in context of parcel non unary
+    // Verifica o tipo em contexto de parcela não unária
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable table,
             LAParser.Parcela_nao_unarioContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
