@@ -1,4 +1,4 @@
-// importando as bibliotecas necessárias
+// Importação de bibliotecas
 package br.ufscar.dc.compiladores.LA;
 
 import java.io.FileNotFoundException;
@@ -15,45 +15,68 @@ public class Principal {
     public static void main(String args[]) {
 
         try {
+            // Registra em arquivoSaida o caminho do arquivo de saída a partir do segundo argumento
             String arquivoSaida = args[1];
+            // Registra em cs o arquivo de entrada a partirdo primeiro argumento
             CharStream cs = CharStreams.fromFileName(args[0]);
 
-            try (PrintWriter pw = new PrintWriter(arquivoSaida)) { //permite escrita em arquivo
+            // Permite escrita no arquivo de saída, criando um PrintWriter pw
+            try (PrintWriter pw = new PrintWriter(arquivoSaida)) { 
                 try{
-                    LALexer lex = new LALexer(cs); //define o lexico como a LA
+                    // Inicializa o léxico
+                    LALexer lex = new LALexer(cs);
                     Token t = null;
                     boolean procede = true;
                     while ((t = lex.nextToken()).getType() != Token.EOF && procede) {
                         String nomeToken = LALexer.VOCABULARY.getDisplayName(t.getType());
-
-                        if(nomeToken.equals("ERRO")) { //simbolo nao identificado
+                        
+                        // Verifica a existência de um símbolo não identicicado
+                        if(nomeToken.equals("ERRO")) { 
                             procede = false;
                             throw new ParseCancellationException("Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado");
-                            
-                        } else if(nomeToken.equals("CADEIA_NAO_FECHADA")) { //falta o fecha aspas
+                        
+                        // Verifica se falta fechar uma cadeira (fecha aspas)
+                        } else if(nomeToken.equals("CADEIA_NAO_FECHADA")) { 
                             procede = false;
                             throw new ParseCancellationException("Linha " + t.getLine() + ": cadeia literal nao fechada");
-                            
-                        } else if(nomeToken.equals("COMENTARIO_NAO_FECHADO")) { // comentario nao fechado
+                        
+                        // Verifica se há um comentário não fechado
+                        } else if(nomeToken.equals("COMENTARIO_NAO_FECHADO")) { 
                             procede = false;
                             throw new ParseCancellationException("Linha " + t.getLine() + ": comentario nao fechado");
                             
                         }
                     }
                     if(procede){
+                        // Reseta o léxico para reiniciar a análise
                         lex.reset();
+
+                        // Cria o fluxo de tokens a partir do léxico 
                         CommonTokenStream tokens = new CommonTokenStream(lex); 
-                        LAParser parser = new LAParser(tokens); // Inicializa o parser semantico, com os tokens
-                        SyntaxErrorListener mcel = new SyntaxErrorListener();   //Inicializa o listener sintatico
+
+                        // Inicializa o parser semântico com os tokens
+                        LAParser parser = new LAParser(tokens);
+
+                        // Inicializa o listener sintático
+                        SyntaxErrorListener mcel = new SyntaxErrorListener();  
                         parser.removeErrorListeners();
-                        parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
-                        var programa = parser.programa();  //Executa a analise sintatica, construindo arvore
+                        // Adiciona o listener sintatico
+                        parser.addErrorListener(mcel);    
 
-                        LAvisitor semantic = new LAvisitor(); //Adiciona o Visitor Semântico
-                        semantic.visitPrograma(programa); //Executa a análise semântica
+                        // Executa a análise sintática, construindo a árvore de análise
+                        var programa = parser.programa();  
+                        
+                        // Inicializa o Visitor Semântico, LAvisitor, para realizar a análise semântica
+                        LAvisitor semantic = new LAvisitor();
 
-                        if(!LASemanticUtils.semanticErrors.isEmpty()){ //Imprime os erros semânticos
+                        // Executa a análise semântica
+                        semantic.visitPrograma(programa); 
+
+                        // Verifica se há erros semânticos
+                        if(!LASemanticUtils.semanticErrors.isEmpty()){
+
+                            //Percorre os erros semânticos e os imprime no arquivo
                             for(var s: LASemanticUtils.semanticErrors){
                                 pw.write(s);
                             }
@@ -61,16 +84,20 @@ public class Principal {
                         }
                     }
                 }   catch (ParseCancellationException e){
+                    // Imprime a mensagem de erro no arquivo de saída
                     pw.println(e.getMessage());
+
+                    // Imprime "Fim da compilacao" no arquivo de saída
                     pw.println("Fim da compilacao");
                 }
-
-            }catch(FileNotFoundException fnfe) { //erro gerado quando o arquivo nao eh encontrado
+            
+            // Exceção quando o arquivo de saída não for encontrado
+            }catch(FileNotFoundException fnfe) { 
                 System.err.println("O arquivo/diretório não existe:"+args[1]);
             }
-        } catch (IOException e) { //se nao consegue encontrar o arquivo saida (argumento 1) ou nao consegue ler
-            //o arquivo de entrada (argumento 0), ele para o programa (falha) e nem chega a compilar
-            //basicamente, se colocar pra rodar e nao escrever os argumentos certo, ele falha
+        // Exceção quando não for possível ler o arquivo de entrada ou de saída
+        } catch (IOException e) { 
+            // Imprime o stackTrace para caso os argumentos não sejam passados corretamente
             e.printStackTrace();
         }
     }
