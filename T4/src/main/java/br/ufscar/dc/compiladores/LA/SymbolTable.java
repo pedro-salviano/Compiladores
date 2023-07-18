@@ -11,8 +11,12 @@ public class SymbolTable {
         LOGICO,
         NAO_DECLARADO,
         INVALIDO,
-        PONTEIRO,
-        ENDERECO
+        PONT_INTE,
+        PONT_REAL,
+        PONT_LOGI,
+        PONT_LITE,
+        ENDERECO,
+        REGISTRO
     }
 
     public enum TypeLAIdentifier{
@@ -41,6 +45,15 @@ public class SymbolTable {
         ste.name = name;
         ste.identifierType = identifierType;
         ste.variableType = variableType;
+        symbolTable.put(name, ste);
+    }
+
+    public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc) {
+        SymbolTableEntry ste = new SymbolTableEntry();
+        ste.name = name;
+        ste.identifierType = identifierType;
+        ste.variableType = variableType;
+        ste.argsRegFunc = argsRegFunc;
         symbolTable.put(name, ste);
     }
    

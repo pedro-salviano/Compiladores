@@ -5,4 +5,6 @@ public class SymbolTableEntry {
     public SymbolTable.TypeLAIdentifier identifierType;
     public SymbolTable.TypeLAVariable variableType;
 
+    public SymbolTable argsRegFunc;
+
 }

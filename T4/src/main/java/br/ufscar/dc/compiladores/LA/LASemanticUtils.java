@@ -23,23 +23,96 @@ public class LASemanticUtils {
             LAParser.IdentificadorContext ctx) {
         var identifier = ctx.getText();
 
-        if (!symbolTable.exists(identifier)) {
-            addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifier + " nao declarado\n");
+        if (!identifier.contains("[") && !identifier.contains("]")){
+            //No dimensions
+            var part = identifier.split("\\.");
+
+            if(!symbolTable.exists(part[0])){
+                addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifier + " nao declarado\n");
+            }
+            else{
+                SymbolTableEntry ident = symbolTable.check(part[0]);
+                if(ident.identifierType == SymbolTable.TypeLAIdentifier.REGISTRO 
+                && part.length > 1){
+                    SymbolTable fields = ident.argsRegFunc;
+                    if(!fields.exists(part[1])){
+                        addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifier + " nao declarado\n");
+                    }
+                    else{
+                        SymbolTableEntry ste = fields.check(part[1]);
+                        if (ste.variableType == SymbolTable.TypeLAVariable.INTEIRO)
+                            return SymbolTable.TypeLAVariable.INTEIRO;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.LITERAL)
+                            return SymbolTable.TypeLAVariable.LITERAL;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.REAL)
+                            return SymbolTable.TypeLAVariable.REAL;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.LOGICO)
+                            return SymbolTable.TypeLAVariable.LOGICO;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.PONT_INTE)
+                            return SymbolTable.TypeLAVariable.PONT_INTE;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.PONT_REAL)
+                            return SymbolTable.TypeLAVariable.PONT_REAL;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.PONT_LOGI)
+                            return SymbolTable.TypeLAVariable.PONT_LOGI;
+                        if (ste.variableType == SymbolTable.TypeLAVariable.PONT_LITE)
+                            return SymbolTable.TypeLAVariable.PONT_LITE;
+                    }
+                }
+                if (ident.identifierType == SymbolTable.TypeLAIdentifier.REGISTRO
+                        && part.length == 1) {
+                    return SymbolTable.TypeLAVariable.REGISTRO;
+                }
+                if (ident.variableType == SymbolTable.TypeLAVariable.INTEIRO)
+                    return SymbolTable.TypeLAVariable.INTEIRO;
+                if (ident.variableType == SymbolTable.TypeLAVariable.LITERAL)
+                    return SymbolTable.TypeLAVariable.LITERAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.REAL)
+                    return SymbolTable.TypeLAVariable.REAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
+                    return SymbolTable.TypeLAVariable.LOGICO;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_INTE)
+                    return SymbolTable.TypeLAVariable.PONT_INTE;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_REAL)
+                    return SymbolTable.TypeLAVariable.PONT_REAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LOGI)
+                    return SymbolTable.TypeLAVariable.PONT_LOGI;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LITE)
+                    return SymbolTable.TypeLAVariable.PONT_LITE;
+            }
         }
         else{
-            SymbolTableEntry ident = symbolTable.check(identifier);
-            if (ident.variableType == SymbolTable.TypeLAVariable.INTEIRO)
-                return SymbolTable.TypeLAVariable.INTEIRO;
-            if (ident.variableType == SymbolTable.TypeLAVariable.LITERAL)
-                return SymbolTable.TypeLAVariable.LITERAL;
-            if (ident.variableType == SymbolTable.TypeLAVariable.REAL)
-                return SymbolTable.TypeLAVariable.REAL;
-            if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
-                return SymbolTable.TypeLAVariable.LOGICO;
-            if (ident.variableType == SymbolTable.TypeLAVariable.PONTEIRO)
-                return SymbolTable.TypeLAVariable.PONTEIRO;
-        }
+            // With dimension
+            var identifierNoDim = "";
+            // Ignores dimension and sees if variable already declared
+            for (var identCtx : ctx.IDENT())
+                identifierNoDim += identCtx.getText();
 
+            for (var xp : ctx.dimensao().exp_aritmetica())
+                verifyType(symbolTable, xp);
+
+            if (!symbolTable.exists(identifierNoDim)) {
+                addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifierNoDim + " nao declarado\n");
+            }
+            else{
+                SymbolTableEntry ident = symbolTable.check(identifierNoDim);
+                if (ident.variableType == SymbolTable.TypeLAVariable.INTEIRO)
+                    return SymbolTable.TypeLAVariable.INTEIRO;
+                if (ident.variableType == SymbolTable.TypeLAVariable.LITERAL)
+                    return SymbolTable.TypeLAVariable.LITERAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.REAL)
+                    return SymbolTable.TypeLAVariable.REAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
+                    return SymbolTable.TypeLAVariable.LOGICO;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_INTE)
+                    return SymbolTable.TypeLAVariable.PONT_INTE;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_REAL)
+                    return SymbolTable.TypeLAVariable.PONT_REAL;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LOGI)
+                    return SymbolTable.TypeLAVariable.PONT_LOGI;
+                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LITE)
+                    return SymbolTable.TypeLAVariable.PONT_LITE;
+            }
+        }   
         return SymbolTable.TypeLAVariable.NAO_DECLARADO;
     }
 
@@ -225,7 +298,19 @@ public class LASemanticUtils {
         if ((tipo1 == SymbolTable.TypeLAVariable.INTEIRO || tipo1 == SymbolTable.TypeLAVariable.REAL) &&
                 (tipo2 == SymbolTable.TypeLAVariable.INTEIRO || tipo2 == SymbolTable.TypeLAVariable.REAL))
             return true;
-        if (tipo1 == SymbolTable.TypeLAVariable.PONTEIRO && tipo2 == SymbolTable.TypeLAVariable.ENDERECO)
+        if ( 
+                (
+                    tipo1 == SymbolTable.TypeLAVariable.PONT_INTE 
+                    || 
+                    tipo1 == SymbolTable.TypeLAVariable.PONT_REAL 
+                    || 
+                    tipo1 == SymbolTable.TypeLAVariable.PONT_LOGI 
+                    || 
+                    tipo1 == SymbolTable.TypeLAVariable.PONT_LOGI 
+                ) 
+                && 
+                tipo2 == SymbolTable.TypeLAVariable.ENDERECO
+            )
             return true;
         if (tipo1 != tipo2)
             return false;
