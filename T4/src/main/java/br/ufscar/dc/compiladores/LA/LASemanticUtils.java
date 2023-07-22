@@ -271,6 +271,55 @@ public class LASemanticUtils {
                     ret = SymbolTable.TypeLAVariable.INVALIDO;
                 }
             }
+
+            if (symbolTable.exists(ctx.IDENT().getText())) {
+                // return type
+                var function = symbolTable.check(ctx.IDENT().getText()); 
+                switch (function.functionType) {
+                    case "inteiro":
+                        ret = SymbolTable.TypeLAVariable.INTEIRO;
+                        break;
+                    case "literal":
+                        ret = SymbolTable.TypeLAVariable.LITERAL;
+                        break;
+                    case "real":
+                        ret = SymbolTable.TypeLAVariable.REAL;
+                        break;
+                    case "logico":
+                        ret = SymbolTable.TypeLAVariable.LOGICO;
+                        break;
+                    case "^logico":
+                        ret = SymbolTable.TypeLAVariable.PONT_LOGI;
+                        break;
+                    case "^real":
+                        ret = SymbolTable.TypeLAVariable.PONT_REAL;
+                        break;
+                    case "^literal":
+                        ret = SymbolTable.TypeLAVariable.PONT_LITE;
+                        break;
+                    case "^inteiro":
+                        ret = SymbolTable.TypeLAVariable.PONT_INTE;
+                        break;
+                    default:
+                        ret = SymbolTable.TypeLAVariable.REGISTRO;
+                        break;
+                }
+
+                // Parameter type and number
+                var nameFun = ctx.IDENT().getText();
+                var funProc = symbolTable.check(nameFun);
+
+                ArrayList<SymbolTable.TypeLAVariable> parameterTypes = new ArrayList<>();
+
+                for (var exp : ctx.expressao()) {
+                    parameterTypes.add(verifyType(symbolTable, exp));
+                }
+
+                if (!funProc.argsRegFunc.validType(parameterTypes)) {
+                    addSemanticError(ctx.IDENT().getSymbol(),
+                            "incompatibilidade de parametros na chamada de " + nameFun + "\n");
+                }
+            }
         }
 
         if (ctx.identificador() != null) {

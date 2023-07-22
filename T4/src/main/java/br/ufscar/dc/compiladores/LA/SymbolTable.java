@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.LA;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SymbolTable {
@@ -56,6 +57,16 @@ public class SymbolTable {
         ste.argsRegFunc = argsRegFunc;
         symbolTable.put(name, ste);
     }
+
+    public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc, String funcType) {
+        SymbolTableEntry ste = new SymbolTableEntry();
+        ste.name = name;
+        ste.identifierType = identifierType;
+        ste.variableType = variableType;
+        ste.argsRegFunc = argsRegFunc;
+        ste.functionType = funcType;
+        symbolTable.put(name, ste);
+    }
    
     // returns true or false if an identifier exists in the table
     public boolean exists(String name) {
@@ -76,6 +87,22 @@ public class SymbolTable {
             else
                 return global.check(name);
         }
+    }
+
+    // type validation for registers and functions
+    public boolean validType(ArrayList<SymbolTable.TypeLAVariable> types){
+        int counter = 0;
+        
+        if(symbolTable.size() != types.size())
+            return false;
+        for(var entry: symbolTable.values()){
+            if(types.get(counter) != entry.variableType){
+                return false;
+            }
+            counter++;
+        }
+        
+        return true;
     }
     
 }

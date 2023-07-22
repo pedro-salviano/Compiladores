@@ -6,5 +6,6 @@ public class SymbolTableEntry {
     public SymbolTable.TypeLAVariable variableType;
 
     public SymbolTable argsRegFunc;
+    public String functionType;
 
 }
