@@ -263,7 +263,11 @@ public class LAvisitor extends LABaseVisitor<Void> {
                                 "identifier " + parameterIdentifier + " ja declarado anteriormente\n");
                         }
                         else{
-                            if(!defineTypeAndAddtoScope(parameterIdentifier, variableType, functionScope)){
+                            if(defineTypeAndAddtoScope(parameterIdentifier, variableType, functionScope)){ 
+                                //Caso consiga definir os tipos para o escopo da função, reproduz para os parametros
+                                defineTypeAndAddtoScope(parameterIdentifier, variableType, funcParameters);
+                            }else{
+                                //Caso não seja um dos tipo_estendido 
                                 if (globalScope.exists(variableType) && globalScope.check(
                                     variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO) {
                                     if (functionScope.exists(parameterIdentifier)) {
@@ -327,8 +331,9 @@ public class LAvisitor extends LABaseVisitor<Void> {
                                 "identifier " + parameterIdentifier + " ja declarado anteriormente\n");
                         }
                         else{
-                            if(!defineTypeAndAddtoScope(parameterIdentifier, variableType, procScope)){
-                                
+                            if(defineTypeAndAddtoScope(parameterIdentifier, variableType, procScope)){
+                                defineTypeAndAddtoScope(parameterIdentifier, variableType, procParameters);
+                            }else{
                                 if (globalScope.exists(variableType) && globalScope.check(
                                         variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO) {
                                     if (procScope.exists(parameterIdentifier)) {
@@ -488,5 +493,14 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
         return super.visitPrograma(ctx);
     }
+    
+    @Override
+    public Void visitCorpo(LAParser.CorpoContext ctx) {
+        var scopes = nestedScopes.runNestedScopes();
+        if (scopes.size() > 1) {
+            nestedScopes.giveupScope();
+        }
 
+        return super.visitCorpo(ctx);
+    }
 }

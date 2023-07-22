@@ -103,14 +103,6 @@ public class LASemanticUtils {
                     return SymbolTable.TypeLAVariable.REAL;
                 if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
                     return SymbolTable.TypeLAVariable.LOGICO;
-                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_INTE)
-                    return SymbolTable.TypeLAVariable.PONT_INTE;
-                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_REAL)
-                    return SymbolTable.TypeLAVariable.PONT_REAL;
-                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LOGI)
-                    return SymbolTable.TypeLAVariable.PONT_LOGI;
-                if (ident.variableType == SymbolTable.TypeLAVariable.PONT_LITE)
-                    return SymbolTable.TypeLAVariable.PONT_LITE;
             }
         }   
         return SymbolTable.TypeLAVariable.NAO_DECLARADO;
