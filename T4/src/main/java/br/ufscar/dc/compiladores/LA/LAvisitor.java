@@ -59,7 +59,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     public Void visitDeclaracao_local(LAParser.Declaracao_localContext ctx) {
         // Lógica para a regra "declaracao_local"
         if(ctx.IDENT() != null){
-            //Existe um IDENT?
+            //Existe um IDENT (sequencia de caracteres que define um identificador (nome))
             var identifier = ctx.IDENT().getText();
             var currentScope = nestedScopes.getCurrentScope();
 
@@ -222,75 +222,6 @@ public class LAvisitor extends LABaseVisitor<Void> {
             }
         }
         return super.visitDeclaracao_local(ctx);
-    }
-
-    @Override
-    public Void visitCmdAtribuicao(CmdAtribuicaoContext ctx){
-        var currentScope = nestedScopes.getCurrentScope();
-        var leftValue = LASemanticUtils.verifyType(currentScope,
-                ctx.identificador());
-        var rightValue = LASemanticUtils.verifyType(currentScope,
-                ctx.expressao());
-        // Verifica atribuição para ponteiros
-        var atribuition = ctx.getText().split("<-");
-        if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
-            // Esse erro informa que a atribuição não é compatível para o identificador presente na atribuição.
-            LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
-                    "atribuicao nao compativel para " + ctx.identificador().getText() + "\n");
-        }
-        // Type Checking
-        if (atribuition[0].contains("^")){
-            if (
-                leftValue == SymbolTable.TypeLAVariable.PONT_INTE
-                && 
-                rightValue != SymbolTable.TypeLAVariable.INTEIRO
-                )
-                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (
-                leftValue == SymbolTable.TypeLAVariable.PONT_LOGI
-                && 
-                rightValue != SymbolTable.TypeLAVariable.LOGICO
-                )
-                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (
-                leftValue == SymbolTable.TypeLAVariable.PONT_REAL
-                && 
-                rightValue != SymbolTable.TypeLAVariable.REAL
-                )
-                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-            if (
-                leftValue == SymbolTable.TypeLAVariable.PONT_LITE
-                && 
-                rightValue != SymbolTable.TypeLAVariable.LITERAL
-                )
-                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
-                        "atribuicao nao compativel para " + atribuition[0] + "\n");
-        }
-        return super.visitCmdAtribuicao(ctx);
-    }
-
-    @Override
-    public Void visitCmdLeia(CmdLeiaContext ctx){
-        // Obtemos o escopo atual através da variável currentScope 
-        var currentScope = nestedScopes.getCurrentScope();
-
-        // Iteramos sobre os identificadores presentes no comando 
-        for (var ident : ctx.identificador()) {
-            // Verificação semântica do tipo do identificador
-            LASemanticUtils.verifyType(currentScope, ident);
-        }
-        return super.visitCmdLeia(ctx);
-    }
-
-    @Override
-    public Void visitExp_aritmetica(LAParser.Exp_aritmeticaContext ctx){
-        // Lógica para a regra "exp_aritmetica"
-        var currentScope = nestedScopes.getCurrentScope();
-        LASemanticUtils.verifyType(currentScope, ctx);
-        return super.visitExp_aritmetica(ctx);
     }
 
     @Override
@@ -463,6 +394,76 @@ public class LAvisitor extends LABaseVisitor<Void> {
         }
 
         return super.visitCmdChamada(ctx);
+    }
+
+
+    @Override
+    public Void visitCmdAtribuicao(CmdAtribuicaoContext ctx){
+        var currentScope = nestedScopes.getCurrentScope();
+        var leftValue = LASemanticUtils.verifyType(currentScope,
+                ctx.identificador());
+        var rightValue = LASemanticUtils.verifyType(currentScope,
+                ctx.expressao());
+        // Verifica atribuição para ponteiros
+        var atribuition = ctx.getText().split("<-");
+        if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
+            // Esse erro informa que a atribuição não é compatível para o identificador presente na atribuição.
+            LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
+                    "atribuicao nao compativel para " + ctx.identificador().getText() + "\n");
+        }
+        // Type Checking
+        if (atribuition[0].contains("^")){
+            if (
+                leftValue == SymbolTable.TypeLAVariable.PONT_INTE
+                && 
+                rightValue != SymbolTable.TypeLAVariable.INTEIRO
+                )
+                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (
+                leftValue == SymbolTable.TypeLAVariable.PONT_LOGI
+                && 
+                rightValue != SymbolTable.TypeLAVariable.LOGICO
+                )
+                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (
+                leftValue == SymbolTable.TypeLAVariable.PONT_REAL
+                && 
+                rightValue != SymbolTable.TypeLAVariable.REAL
+                )
+                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+            if (
+                leftValue == SymbolTable.TypeLAVariable.PONT_LITE
+                && 
+                rightValue != SymbolTable.TypeLAVariable.LITERAL
+                )
+                LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
+                        "atribuicao nao compativel para " + atribuition[0] + "\n");
+        }
+        return super.visitCmdAtribuicao(ctx);
+    }
+
+    @Override
+    public Void visitCmdLeia(CmdLeiaContext ctx){
+        // Obtemos o escopo atual através da variável currentScope 
+        var currentScope = nestedScopes.getCurrentScope();
+
+        // Iteramos sobre os identificadores presentes no comando 
+        for (var ident : ctx.identificador()) {
+            // Verificação semântica do tipo do identificador
+            LASemanticUtils.verifyType(currentScope, ident);
+        }
+        return super.visitCmdLeia(ctx);
+    }
+
+    @Override
+    public Void visitExp_aritmetica(LAParser.Exp_aritmeticaContext ctx){
+        // Lógica para a regra "exp_aritmetica"
+        var currentScope = nestedScopes.getCurrentScope();
+        LASemanticUtils.verifyType(currentScope, ctx);
+        return super.visitExp_aritmetica(ctx);
     }
 
     // Program entrypoint method
