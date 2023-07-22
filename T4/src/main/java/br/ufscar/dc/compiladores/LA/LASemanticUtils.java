@@ -5,6 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import br.ufscar.dc.compiladores.LA.LAParser.Exp_aritmeticaContext;
+import br.ufscar.dc.compiladores.LA.LAParser.ExpressaoContext;
+import br.ufscar.dc.compiladores.LA.LAParser.FatorContext;
+import br.ufscar.dc.compiladores.LA.LAParser.Fator_logicoContext;
+import br.ufscar.dc.compiladores.LA.LAParser.IdentificadorContext;
+import br.ufscar.dc.compiladores.LA.LAParser.ParcelaContext;
+import br.ufscar.dc.compiladores.LA.LAParser.TermoContext;
+import br.ufscar.dc.compiladores.LA.LAParser.Termo_logicoContext;
+import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
 public class LASemanticUtils {
     //  Criação de uma lista para armazenar os erros semânticos
@@ -21,11 +32,11 @@ public class LASemanticUtils {
     // Obtém o tipo do símbolo a partir da tabela de símbolos
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.IdentificadorContext ctx) {
-        var identifier = ctx.getText();
+        String identifier = ctx.getText();
 
         if (!identifier.contains("[") && !identifier.contains("]")){
             //No dimensions
-            var part = identifier.split("\\.");
+            String[] part = identifier.split("\\.");
 
             if(!symbolTable.exists(part[0])){
                 addSemanticError(ctx.IDENT(0).getSymbol(), "identificador " + identifier + " nao declarado\n");
@@ -82,12 +93,12 @@ public class LASemanticUtils {
         }
         else{
             // With dimension
-            var identifierNoDim = "";
+            String identifierNoDim = "";
             // Ignores dimension and sees if variable already declared
-            for (var identCtx : ctx.IDENT())
+            for (TerminalNode identCtx : ctx.IDENT())
                 identifierNoDim += identCtx.getText();
 
-            for (var xp : ctx.dimensao().exp_aritmetica())
+            for (Exp_aritmeticaContext xp : ctx.dimensao().exp_aritmetica())
                 verifyType(symbolTable, xp);
 
             if (!symbolTable.exists(identifierNoDim)) {
@@ -112,7 +123,7 @@ public class LASemanticUtils {
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.ExpressaoContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
-        for (var tl : ctx.termo_logico()) {
+        for (Termo_logicoContext tl : ctx.termo_logico()) {
             SymbolTable.TypeLAVariable aux = verifyType(symbolTable, tl);
             if (ret == null) {
                 ret = aux;
@@ -127,7 +138,7 @@ public class LASemanticUtils {
     // Verifica o tipo em contexto de termo lógico
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable, LAParser.Termo_logicoContext ctx){
         SymbolTable.TypeLAVariable ret = null;
-        for (var fL : ctx.fator_logico()){
+        for (Fator_logicoContext fL : ctx.fator_logico()){
             SymbolTable.TypeLAVariable aux = verifyType(symbolTable, fL);
             if (ret == null) {
                 ret = aux;
@@ -160,15 +171,15 @@ public class LASemanticUtils {
             LAParser.Exp_relacionalContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
         if (ctx.exp_aritmetica().size() == 1)
-            for (var ea : ctx.exp_aritmetica()) {
-                var aux = verifyType(table, ea);
+            for (Exp_aritmeticaContext ea : ctx.exp_aritmetica()) {
+                TypeLAVariable aux = verifyType(table, ea);
                 if (ret == null) {
                     ret = aux;
                 } else if (!verifyType(ret, aux)) {
                     ret = SymbolTable.TypeLAVariable.INVALIDO;
                 }
             } else {
-            for (var ea : ctx.exp_aritmetica()) {
+            for (Exp_aritmeticaContext ea : ctx.exp_aritmetica()) {
                 verifyType(table, ea);
             }
 
@@ -183,8 +194,8 @@ public class LASemanticUtils {
             LAParser.Exp_aritmeticaContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
 
-        for (var te : ctx.termo()) {
-            var aux = verifyType(table, te);
+        for (TermoContext te : ctx.termo()) {
+            TypeLAVariable aux = verifyType(table, te);
             if (ret == null) {
                 ret = aux;
             } else if (!verifyType(ret, aux)) {
@@ -198,8 +209,8 @@ public class LASemanticUtils {
             LAParser.TermoContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
 
-        for (var fa : ctx.fator()) {
-            var aux = verifyType(table, fa);
+        for (FatorContext fa : ctx.fator()) {
+            TypeLAVariable aux = verifyType(table, fa);
             if (ret == null) {
                 ret = aux;
             } else if (!verifyType(ret, aux)) {
@@ -214,8 +225,8 @@ public class LASemanticUtils {
             LAParser.FatorContext ctx) {
         SymbolTable.TypeLAVariable ret = null;
 
-        for (var pa : ctx.parcela()) {
-            var aux = verifyType(table, pa);
+        for (ParcelaContext pa : ctx.parcela()) {
+            TypeLAVariable aux = verifyType(table, pa);
             if (ret == null) {
                 ret = aux;
             } else if (!verifyType(ret, aux)) {
@@ -255,8 +266,8 @@ public class LASemanticUtils {
                         "identificador " + ctx.IDENT().getText() + " nao declarado\n");
             }
 
-            for (var exp : ctx.expressao()) {
-                var aux = verifyType(symbolTable, exp);
+            for (ExpressaoContext exp : ctx.expressao()) {
+                TypeLAVariable aux = verifyType(symbolTable, exp);
                 if (ret == null) {
                     ret = aux;
                 } else if (!verifyType(ret, aux)) {
@@ -266,7 +277,7 @@ public class LASemanticUtils {
 
             if (symbolTable.exists(ctx.IDENT().getText())) {
                 // return type
-                var function = symbolTable.check(ctx.IDENT().getText()); 
+                SymbolTableEntry function = symbolTable.check(ctx.IDENT().getText()); 
                 switch (function.functionType) {
                     case "inteiro":
                         ret = SymbolTable.TypeLAVariable.INTEIRO;
@@ -298,12 +309,12 @@ public class LASemanticUtils {
                 }
 
                 // Parameter type and number
-                var nameFun = ctx.IDENT().getText();
-                var funProc = symbolTable.check(nameFun);
+                String nameFun = ctx.IDENT().getText();
+                SymbolTableEntry funProc = symbolTable.check(nameFun);
 
                 ArrayList<SymbolTable.TypeLAVariable> parameterTypes = new ArrayList<>();
 
-                for (var exp : ctx.expressao()) {
+                for (ExpressaoContext exp : ctx.expressao()) {
                     parameterTypes.add(verifyType(symbolTable, exp));
                 }
 
@@ -319,7 +330,7 @@ public class LASemanticUtils {
         }
 
         if (ctx.IDENT() == null && ctx.expressao() != null) {
-            for (var exp : ctx.expressao()) {
+            for (ExpressaoContext exp : ctx.expressao()) {
                 return verifyType(symbolTable, exp);
             }
         }

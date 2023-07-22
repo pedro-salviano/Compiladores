@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import br.ufscar.dc.compiladores.LA.LAParser.ProgramaContext;
+
 public class Principal {
     public static void main(String args[]) {
 
@@ -65,7 +67,7 @@ public class Principal {
                         parser.addErrorListener(mcel);    
 
                         // Executa a análise sintática, construindo a árvore de análise
-                        var programa = parser.programa();  
+                        ProgramaContext programa = parser.programa();  
                         
                         // Inicializa o Visitor Semântico, LAvisitor, para realizar a análise semântica
                         LAvisitor semantic = new LAvisitor();
@@ -77,7 +79,7 @@ public class Principal {
                         if(!LASemanticUtils.semanticErrors.isEmpty()){
 
                             //Percorre os erros semânticos e os imprime no arquivo
-                            for(var s: LASemanticUtils.semanticErrors){
+                            for(String s: LASemanticUtils.semanticErrors){
                                 pw.write(s);
                             }
                             pw.write("Fim da compilacao\n");

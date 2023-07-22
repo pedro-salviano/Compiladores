@@ -2,11 +2,20 @@
 package br.ufscar.dc.compiladores.LA;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import br.ufscar.dc.compiladores.LA.LAParser.CmdAtribuicaoContext;
 import br.ufscar.dc.compiladores.LA.LAParser.CmdChamadaContext;
+import br.ufscar.dc.compiladores.LA.LAParser.CmdContext;
 import br.ufscar.dc.compiladores.LA.LAParser.CmdLeiaContext;
+import br.ufscar.dc.compiladores.LA.LAParser.Decl_local_globalContext;
 import br.ufscar.dc.compiladores.LA.LAParser.Declaracao_globalContext;
+import br.ufscar.dc.compiladores.LA.LAParser.Exp_aritmeticaContext;
+import br.ufscar.dc.compiladores.LA.LAParser.ExpressaoContext;
+import br.ufscar.dc.compiladores.LA.LAParser.IdentificadorContext;
+import br.ufscar.dc.compiladores.LA.LAParser.VariavelContext;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
     
@@ -60,8 +69,8 @@ public class LAvisitor extends LABaseVisitor<Void> {
         // Lógica para a regra "declaracao_local"
         if(ctx.IDENT() != null){
             //Existe um IDENT (sequencia de caracteres que define um identificador (nome))
-            var identifier = ctx.IDENT().getText();
-            var currentScope = nestedScopes.getCurrentScope();
+            String identifier = ctx.IDENT().getText();
+            SymbolTable currentScope = nestedScopes.getCurrentScope();
 
             if (ctx.tipo_basico() != null) { 
                 // constant declaration
@@ -70,7 +79,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                             "identifier " + identifier + " ja declarado anteriormente\n");
                 } else {
-                    var constantType = ctx.tipo_basico().getText();
+                    String constantType = ctx.tipo_basico().getText();
                     switch (constantType) {
                         case "inteiro":
                             currentScope.put(identifier, SymbolTable.TypeLAIdentifier.CONSTANTE,
@@ -100,16 +109,16 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                             "identifier " + identifier + " ja declarado anteriormente\n");
                 } else {
-                    var fieldsTypes = new SymbolTable();
+                    SymbolTable fieldsTypes = new SymbolTable();
                     currentScope.put(identifier, SymbolTable.TypeLAIdentifier.TIPO, null, fieldsTypes);
-                    for (var variable : ctx.tipo().registro().variavel()) {
-                        for (var ctxIdentVariable : variable.identificador()) {
-                            var variableIdentifier = ctxIdentVariable.getText();
+                    for (VariavelContext variable : ctx.tipo().registro().variavel()) {
+                        for (IdentificadorContext ctxIdentVariable : variable.identificador()) {
+                            String variableIdentifier = ctxIdentVariable.getText();
                             if (fieldsTypes.exists(variableIdentifier)) {
                                 LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
                                         "identificador " + variableIdentifier + " ja declarado anteriormente\n");
                             } else {
-                                var variableType = variable.tipo().getText();
+                                String variableType = variable.tipo().getText();
                                 if(!defineTypeAndAddtoScope(variableIdentifier, variableType, fieldsTypes)){
                                     //nothing happens
                                 }
@@ -122,15 +131,15 @@ public class LAvisitor extends LABaseVisitor<Void> {
             //'declare' variavel
             if(ctx.variavel().tipo().registro() == null){
                 //Não é registro
-                for (var ctxIdentVariable : ctx.variavel().identificador()) {
-                    var variableIdentifier = "";
-                    for (var ident : ctxIdentVariable.IDENT())
+                for (IdentificadorContext ctxIdentVariable : ctx.variavel().identificador()) {
+                    String variableIdentifier = "";
+                    for (TerminalNode ident : ctxIdentVariable.IDENT())
                         variableIdentifier += ident.getText();
-                    var currentScope = nestedScopes.getCurrentScope();
+                    SymbolTable currentScope = nestedScopes.getCurrentScope();
 
                     if (ctxIdentVariable.dimensao() != null)
                             // dimension exists
-                            for (var expDim : ctxIdentVariable.dimensao().exp_aritmetica())
+                            for (Exp_aritmeticaContext expDim : ctxIdentVariable.dimensao().exp_aritmetica())
                                 LASemanticUtils.verifyType(currentScope, expDim);
 
                     // Verifica se o identificador da variável já foi declarado anteriormente.
@@ -138,7 +147,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                         LASemanticUtils.addSemanticError(ctxIdentVariable.IDENT(0).getSymbol(),
                                 "identificador " + variableIdentifier + " ja declarado anteriormente\n");
                     } else {
-                        var variableType = ctx.variavel().tipo().getText();
+                        String variableType = ctx.variavel().tipo().getText();
                         
                         if(!defineTypeAndAddtoScope(variableIdentifier, variableType, currentScope)){
                             // Caso o tipo não seja um tipo básico
@@ -173,7 +182,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
             else{
                 // Register with type declaration
                 ArrayList<String> registerIdentifiers = new ArrayList<>();
-                for (var ctxIdentReg : ctx.variavel().identificador()) {
+                for (IdentificadorContext ctxIdentReg : ctx.variavel().identificador()) {
                     String identifierName = ctxIdentReg.getText();
                     SymbolTable currentScope = nestedScopes.getCurrentScope();
 
@@ -189,13 +198,13 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     }
                 }
 
-                for (var ctxVariableRegister : ctx.variavel().tipo().registro().variavel()) {
+                for (VariavelContext ctxVariableRegister : ctx.variavel().tipo().registro().variavel()) {
                     // populate register context
-                    for (var ctxVariableRegisterIdent : ctxVariableRegister.identificador()) {
-                        var registerFieldName = ctxVariableRegisterIdent.getText();
+                    for (IdentificadorContext ctxVariableRegisterIdent : ctxVariableRegister.identificador()) {
+                        String registerFieldName = ctxVariableRegisterIdent.getText();
                         SymbolTable currentScope = nestedScopes.getCurrentScope();
 
-                        for (var registerIdentifier : registerIdentifiers) {
+                        for (String registerIdentifier : registerIdentifiers) {
                             SymbolTableEntry entry = currentScope.check(registerIdentifier);
                             SymbolTable registerFields = entry.argsRegFunc;
 
@@ -203,7 +212,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                                 LASemanticUtils.addSemanticError(ctxVariableRegisterIdent.IDENT(0).getSymbol(),
                                         "identificador " + registerFieldName + " ja declarado anteriormente\n");
                             } else {
-                                var variableType = ctxVariableRegister.tipo().getText();
+                                String variableType = ctxVariableRegister.tipo().getText();
                                 if(!defineTypeAndAddtoScope(registerFieldName, variableType, registerFields)){
                                     // not a basic/primitive type
                                     if (!currentScope.exists(variableType)) {
@@ -226,14 +235,14 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
     @Override
     public Void visitDeclaracao_global(Declaracao_globalContext ctx){
-        var identifier = ctx.IDENT().getText();
+        String identifier = ctx.IDENT().getText();
 
         // Geting scopes
-        var scopes = nestedScopes.runNestedScopes();
+        List<SymbolTable> scopes = nestedScopes.runNestedScopes();
         if (scopes.size() > 1) {
             nestedScopes.giveupScope();
         }
-        var globalScope = nestedScopes.getCurrentScope();
+        SymbolTable globalScope = nestedScopes.getCurrentScope();
 
         if(ctx.tipo_estendido() != null){
             //has a type and returns, is a function
@@ -274,8 +283,8 @@ public class LAvisitor extends LABaseVisitor<Void> {
                                         LASemanticUtils.addSemanticError(ident.IDENT(0).getSymbol(),
                                                 "identifier " + parameterIdentifier + " ja declarado anteriormente\n");
                                     } else {
-                                        var fields = globalScope.check(variableType);
-                                        var nestedTableType = fields.argsRegFunc;
+                                        SymbolTableEntry fields = globalScope.check(variableType);
+                                        SymbolTable nestedTableType = fields.argsRegFunc;
 
                                         functionScope.put(parameterIdentifier,
                                                 SymbolTable.TypeLAIdentifier.REGISTRO,
@@ -387,9 +396,9 @@ public class LAvisitor extends LABaseVisitor<Void> {
             LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                     "identificador " + identifier + " nao declarado\n");
         } else {
-            var funProc = currentScope.check(identifier);
+            SymbolTableEntry funProc = currentScope.check(identifier);
             ArrayList<SymbolTable.TypeLAVariable> parameterTypes = new ArrayList<>();
-            for (var exp : ctx.expressao()) {
+            for (ExpressaoContext exp : ctx.expressao()) {
                 parameterTypes.add(LASemanticUtils.verifyType(currentScope, exp));
             }
             if (!funProc.argsRegFunc.validType(parameterTypes)) {
@@ -404,13 +413,13 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
     @Override
     public Void visitCmdAtribuicao(CmdAtribuicaoContext ctx){
-        var currentScope = nestedScopes.getCurrentScope();
-        var leftValue = LASemanticUtils.verifyType(currentScope,
+        SymbolTable currentScope = nestedScopes.getCurrentScope();
+        TypeLAVariable leftValue = LASemanticUtils.verifyType(currentScope,
                 ctx.identificador());
-        var rightValue = LASemanticUtils.verifyType(currentScope,
+        TypeLAVariable rightValue = LASemanticUtils.verifyType(currentScope,
                 ctx.expressao());
         // Verifica atribuição para ponteiros
-        var atribuition = ctx.getText().split("<-");
+        String[] atribuition = ctx.getText().split("<-");
         if (!LASemanticUtils.verifyType(leftValue, rightValue) && !atribuition[0].contains("^")) {
             // Esse erro informa que a atribuição não é compatível para o identificador presente na atribuição.
             LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
@@ -453,10 +462,10 @@ public class LAvisitor extends LABaseVisitor<Void> {
     @Override
     public Void visitCmdLeia(CmdLeiaContext ctx){
         // Obtemos o escopo atual através da variável currentScope 
-        var currentScope = nestedScopes.getCurrentScope();
+        SymbolTable currentScope = nestedScopes.getCurrentScope();
 
         // Iteramos sobre os identificadores presentes no comando 
-        for (var ident : ctx.identificador()) {
+        for (IdentificadorContext ident : ctx.identificador()) {
             // Verificação semântica do tipo do identificador
             LASemanticUtils.verifyType(currentScope, ident);
         }
@@ -466,7 +475,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     @Override
     public Void visitExp_aritmetica(LAParser.Exp_aritmeticaContext ctx){
         // Lógica para a regra "exp_aritmetica"
-        var currentScope = nestedScopes.getCurrentScope();
+        SymbolTable currentScope = nestedScopes.getCurrentScope();
         LASemanticUtils.verifyType(currentScope, ctx);
         return super.visitExp_aritmetica(ctx);
     }
@@ -474,16 +483,16 @@ public class LAvisitor extends LABaseVisitor<Void> {
     // Program entrypoint method
     @Override
     public Void visitPrograma(LAParser.ProgramaContext ctx) {
-        for (var ctxCmd : ctx.corpo().cmd()) {
+        for (CmdContext ctxCmd : ctx.corpo().cmd()) {
             if (ctxCmd.cmdRetorne() != null) {
                 LASemanticUtils.addSemanticError(ctxCmd.cmdRetorne().getStart(),
                         "comando retorne nao permitido nesse escopo\n");
             }
         }
 
-        for (var ctxDec : ctx.declaracoes().decl_local_global()) {
+        for (Decl_local_globalContext ctxDec : ctx.declaracoes().decl_local_global()) {
             if (ctxDec.declaracao_global() != null && ctxDec.declaracao_global().tipo_estendido() == null) {
-                for (var ctxCmd : ctxDec.declaracao_global().cmd()) {
+                for (CmdContext ctxCmd : ctxDec.declaracao_global().cmd()) {
                     if (ctxCmd.cmdRetorne() != null)
                         LASemanticUtils.addSemanticError(ctxCmd.cmdRetorne().getStart(),
                                 "comando retorne nao permitido nesse escopo\n");
@@ -496,7 +505,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     
     @Override
     public Void visitCorpo(LAParser.CorpoContext ctx) {
-        var scopes = nestedScopes.runNestedScopes();
+        List<SymbolTable> scopes = nestedScopes.runNestedScopes();
         if (scopes.size() > 1) {
             nestedScopes.giveupScope();
         }

@@ -95,7 +95,7 @@ public class SymbolTable {
         
         if(symbolTable.size() != types.size())
             return false;
-        for(var entry: symbolTable.values()){
+        for(SymbolTableEntry entry: symbolTable.values()){
             if(types.get(counter) != entry.variableType){
                 return false;
             }
