@@ -23,7 +23,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 
-    public Boolean defineTypeAndAddtoScope(String variableIdentifier, String variableType, SymbolTable symbolTable){
+    Boolean defineTypeAndAddtoScope(String variableIdentifier, String variableType, SymbolTable symbolTable){
         switch (variableType) {
             case "inteiro":
                 symbolTable.put(variableIdentifier,
@@ -396,14 +396,9 @@ public class LAvisitor extends LABaseVisitor<Void> {
             LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                     "identificador " + identifier + " nao declarado\n");
         } else {
-            SymbolTableEntry funProc = currentScope.check(identifier);
             ArrayList<SymbolTable.TypeLAVariable> parameterTypes = new ArrayList<>();
             for (ExpressaoContext exp : ctx.expressao()) {
                 parameterTypes.add(LASemanticUtils.verifyType(currentScope, exp));
-            }
-            if (!funProc.argsRegFunc.validType(parameterTypes)) {
-                LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
-                        "incompatibilidade de parametros na chamada de " + identifier + "\n");
             }
         }
 

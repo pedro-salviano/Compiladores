@@ -11,7 +11,6 @@ import br.ufscar.dc.compiladores.LA.LAParser.Exp_aritmeticaContext;
 import br.ufscar.dc.compiladores.LA.LAParser.ExpressaoContext;
 import br.ufscar.dc.compiladores.LA.LAParser.FatorContext;
 import br.ufscar.dc.compiladores.LA.LAParser.Fator_logicoContext;
-import br.ufscar.dc.compiladores.LA.LAParser.IdentificadorContext;
 import br.ufscar.dc.compiladores.LA.LAParser.ParcelaContext;
 import br.ufscar.dc.compiladores.LA.LAParser.TermoContext;
 import br.ufscar.dc.compiladores.LA.LAParser.Termo_logicoContext;
@@ -114,6 +113,8 @@ public class LASemanticUtils {
                     return SymbolTable.TypeLAVariable.REAL;
                 if (ident.variableType == SymbolTable.TypeLAVariable.LOGICO)
                     return SymbolTable.TypeLAVariable.LOGICO;
+                if (ident.identifierType == SymbolTable.TypeLAIdentifier.REGISTRO)
+                    return SymbolTable.TypeLAVariable.REGISTRO;
             }
         }   
         return SymbolTable.TypeLAVariable.NAO_DECLARADO;
@@ -178,7 +179,7 @@ public class LASemanticUtils {
                 } else if (!verifyType(ret, aux)) {
                     ret = SymbolTable.TypeLAVariable.INVALIDO;
                 }
-            } else {
+        } else {
             for (Exp_aritmeticaContext ea : ctx.exp_aritmetica()) {
                 verifyType(table, ea);
             }
