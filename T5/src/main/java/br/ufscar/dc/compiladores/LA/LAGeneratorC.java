@@ -87,7 +87,7 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
         String type = null;
                 switch(val) {
                     case LITERAL:
-                        type = "c";
+                        type = "s";
                         break;
                     case INTEIRO: 
                         type = "d";
@@ -108,32 +108,32 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
                 symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
                 break;
             case "literal":
-                output.append("        char " + variableIdentifier + "[50];\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                output.append("        char " + variableIdentifier + "[80];\n");
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LITERAL);
                 break;
             case "real":
                 output.append("        float " + variableIdentifier + ";\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.REAL);
                 break;
             case "logico":
                 output.append("        boolean " + variableIdentifier + ";\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.LOGICO);
                 break;
             case "^logico":
                 output.append("        boolean* " + variableIdentifier + ";\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.PONT_LOGI);
                 break;
             case "^real":
                 output.append("        float* " + variableIdentifier + ";\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.PONT_REAL);
                 break;
             case "^literal":
-                output.append("        char* " + variableIdentifier + "[50];\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                output.append("        char* " + variableIdentifier + "[80];\n");
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.PONT_LITE);
                 break;
             case "^inteiro":
                 output.append("        int* " + variableIdentifier + ";\n");
-                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.INTEIRO);
+                symbolTable.put( variableIdentifier, SymbolTable.TypeLAIdentifier.VARIAVEL, TypeLAVariable.PONT_INTE);
                 break;
             default:
                 return false;
@@ -692,6 +692,20 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
         output.append("} while(");
         visitExpressao(ctx.expressao());
         output.append(");\n");
+        return null;
+    }
+
+    @Override
+    public Void visitIdentificador(IdentificadorContext ctx) {//criado para imprimir identificadores com dimensoes
+        // TODO Auto-generated method stub
+        output.append(" ");
+        int i = 0;
+        for(TerminalNode id : ctx.IDENT()){
+            if(i++ > 0)
+                output.append(".");
+            output.append(id.getText());
+        }
+        visitDimensao(ctx.dimensao());
         return null;
     }
 }
