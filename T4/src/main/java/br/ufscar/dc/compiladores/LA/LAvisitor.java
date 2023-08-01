@@ -19,10 +19,11 @@ import br.ufscar.dc.compiladores.LA.LAParser.VariavelContext;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
     
-public class LAvisitor extends LABaseVisitor<Void> {
+public class LAvisitor extends LABaseVisitor<Void> { //verifica semantica em cada nivel da arvore sintatica
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 
+    //define o tipo e add ao escopo
     Boolean defineTypeAndAddtoScope(String variableIdentifier, String variableType, SymbolTable symbolTable){
         switch (variableType) {
             case "inteiro":
@@ -65,6 +66,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
 
     @Override
+    //verifica se os identificadores foram declarados antes e add na tabela de simbolos com o tipo
     public Void visitDeclaracao_local(LAParser.Declaracao_localContext ctx) {
         // Lógica para a regra "declaracao_local"
         if(ctx.IDENT() != null){
@@ -98,17 +100,17 @@ public class LAvisitor extends LABaseVisitor<Void> {
                                     TypeLAVariable.LOGICO);
                             break;
                         default:
-                            // never reached
+                            // nunca chega aqui
                             break;
                     }
                 }
             } else {
                 // type declaration
                 // 'tipo' IDENT ':' tipo
-                if (currentScope.exists(identifier)) {
+                if (currentScope.exists(identifier)) { //ja tava declarado
                     LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                             "identifier " + identifier + " ja declarado anteriormente\n");
-                } else {
+                } else { //add erro
                     SymbolTable fieldsTypes = new SymbolTable();
                     currentScope.put(identifier, SymbolTable.TypeLAIdentifier.TIPO, null, fieldsTypes);
                     for (VariavelContext variable : ctx.tipo().registro().variavel()) {
@@ -120,7 +122,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                             } else {
                                 String variableType = variable.tipo().getText();
                                 if(!defineTypeAndAddtoScope(variableIdentifier, variableType, fieldsTypes)){
-                                    //nothing happens
+                                    //nada acontece
                                 }
                             }
                         }
@@ -180,14 +182,14 @@ public class LAvisitor extends LABaseVisitor<Void> {
                 }
             }
             else{
-                // Register with type declaration
+                // declaracao do registro com tipo
                 ArrayList<String> registerIdentifiers = new ArrayList<>();
                 for (IdentificadorContext ctxIdentReg : ctx.variavel().identificador()) {
                     String identifierName = ctxIdentReg.getText();
                     SymbolTable currentScope = nestedScopes.getCurrentScope();
 
                     if (currentScope.exists(identifierName)) {
-                        // identifier must be unique 
+                        // ident tem que ser unico
                         LASemanticUtils.addSemanticError(ctxIdentReg.IDENT(0).getSymbol(),
                                 "identificador " + identifierName + " ja declarado anteriormente\n");
                     } else {
@@ -199,7 +201,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                 }
 
                 for (VariavelContext ctxVariableRegister : ctx.variavel().tipo().registro().variavel()) {
-                    // populate register context
+                    // popula o contexto do registro
                     for (IdentificadorContext ctxVariableRegisterIdent : ctxVariableRegister.identificador()) {
                         String registerFieldName = ctxVariableRegisterIdent.getText();
                         SymbolTable currentScope = nestedScopes.getCurrentScope();
@@ -214,7 +216,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
                             } else {
                                 String variableType = ctxVariableRegister.tipo().getText();
                                 if(!defineTypeAndAddtoScope(registerFieldName, variableType, registerFields)){
-                                    // not a basic/primitive type
+                                    // nao eh um tipo primitivo
                                     if (!currentScope.exists(variableType)) {
                                         LASemanticUtils.addSemanticError(
                                                 ctxVariableRegisterIdent.IDENT(0).getSymbol(),
@@ -234,10 +236,12 @@ public class LAvisitor extends LABaseVisitor<Void> {
     }
 
     @Override
-    public Void visitDeclaracao_global(Declaracao_globalContext ctx){
+    //verifica se os identificadores já foram declarados antes e add na tabela de simbolos junto com o tipo
+    // lida com delcaração de parametros de funções
+    public Void visitDeclaracao_global(Declaracao_globalContext ctx){ 
         String identifier = ctx.IDENT().getText();
 
-        // Geting scopes
+        // recebe escopos
         List<SymbolTable> scopes = nestedScopes.runNestedScopes();
         if (scopes.size() > 1) {
             nestedScopes.giveupScope();
@@ -245,7 +249,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
         SymbolTable globalScope = nestedScopes.getCurrentScope();
 
         if(ctx.tipo_estendido() != null){
-            //has a type and returns, is a function
+            //tem um tipo e retorna, eh função
             nestedScopes.createNewScope();
             SymbolTable functionScope = nestedScopes.getCurrentScope();
             functionScope.setGlobal(globalScope); //Add global scope reference to symbolTable
@@ -263,11 +267,11 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     String variableType =  declaredParameter.tipo_estendido().getText();
 
                     for(LAParser.IdentificadorContext ident: declaredParameter.identificador()){
-                        //After declaring a type of a parameter, is possible to declare multiple parameters of same type
+                        //dps de declarar o tipo de um parametro, pode declarar varios parametros do msm tipo
                         String parameterIdentifier = ident.getText();
 
                         if(functionScope.exists(parameterIdentifier)){
-                            //Another parameter with same name, already defined
+                            //outro parametro ja identificado com msm nome
                             LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                                 "identifier " + parameterIdentifier + " ja declarado anteriormente\n");
                         }
@@ -314,10 +318,10 @@ public class LAvisitor extends LABaseVisitor<Void> {
             }
 
         }else{
-            //is a procedure
+            //é um procedure
             nestedScopes.createNewScope();
             SymbolTable procScope = nestedScopes.getCurrentScope();
-            procScope.setGlobal(globalScope); //Add global scope reference to symbolTable
+            procScope.setGlobal(globalScope); //Add referencia do escopo global na symbolTable
 
             if(globalScope.exists(identifier)){
                 LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
@@ -331,11 +335,11 @@ public class LAvisitor extends LABaseVisitor<Void> {
                     String variableType =  declaredParameter.tipo_estendido().getText();
 
                     for(LAParser.IdentificadorContext ident: declaredParameter.identificador()){
-                        //After declaring a type of a parameter, is possible to declare multiple parameters of same type
+                        //dps de declarar o tipo de um parametro, pode declarar varios parametros do msm tipo
                         String parameterIdentifier = ident.getText();
 
                         if(procScope.exists(parameterIdentifier)){
-                            //Another parameter with same name, already defined
+                            //outro parametro ja identificado com msm nome
                             LASemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                                 "identifier " + parameterIdentifier + " ja declarado anteriormente\n");
                         }
@@ -387,7 +391,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     }
 
     @Override
-    public Void visitCmdChamada(CmdChamadaContext ctx){
+    public Void visitCmdChamada(CmdChamadaContext ctx){ //verifica se os identificadores de funções foram delcarados antes
 
         SymbolTable currentScope = nestedScopes.getCurrentScope();
         String identifier  = ctx.IDENT().getText();
@@ -407,6 +411,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
 
     @Override
+    //verifica se a atribuição é compativel (tipo, ponteiro, etc)
     public Void visitCmdAtribuicao(CmdAtribuicaoContext ctx){
         SymbolTable currentScope = nestedScopes.getCurrentScope();
         TypeLAVariable leftValue = LASemanticUtils.verifyType(currentScope,
@@ -420,7 +425,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
             LASemanticUtils.addSemanticError(ctx.identificador().IDENT(0).getSymbol(),
                     "atribuicao nao compativel para " + ctx.identificador().getText() + "\n");
         }
-        // Type Checking
+        // checa tipo
         if (atribuition[0].contains("^")){
             if (
                 leftValue == SymbolTable.TypeLAVariable.PONT_INTE
@@ -455,6 +460,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     }
 
     @Override
+    //verifica se os identificadores usados na chamada 'leia' foram declarados antes
     public Void visitCmdLeia(CmdLeiaContext ctx){
         // Obtemos o escopo atual através da variável currentScope 
         SymbolTable currentScope = nestedScopes.getCurrentScope();
@@ -468,6 +474,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     }
 
     @Override
+    //verifica se os tipos das chamadas aritmeticas sao compativeis
     public Void visitExp_aritmetica(LAParser.Exp_aritmeticaContext ctx){
         // Lógica para a regra "exp_aritmetica"
         SymbolTable currentScope = nestedScopes.getCurrentScope();
@@ -477,6 +484,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
 
     // Program entrypoint method
     @Override
+    //verifica se nao tem return fora de função
     public Void visitPrograma(LAParser.ProgramaContext ctx) {
         for (CmdContext ctxCmd : ctx.corpo().cmd()) {
             if (ctxCmd.cmdRetorne() != null) {
@@ -499,6 +507,7 @@ public class LAvisitor extends LABaseVisitor<Void> {
     }
     
     @Override
+    //cria e gerencia escopos pra cada bloco de codigo
     public Void visitCorpo(LAParser.CorpoContext ctx) {
         List<SymbolTable> scopes = nestedScopes.runNestedScopes();
         if (scopes.size() > 1) {
