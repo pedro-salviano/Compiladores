@@ -29,6 +29,8 @@ public class LASemanticUtils {
     }
 
     // Obtém o tipo do símbolo a partir da tabela de símbolos
+    //Recebe o contexto do identificador como parametro
+    //Se o id nso estiver declarado, gera erro. Se estiver, retorna o tipo dele
     public static SymbolTable.TypeLAVariable verifyType(SymbolTable symbolTable,
             LAParser.IdentificadorContext ctx) {
         String identifier = ctx.getText();
@@ -351,7 +353,7 @@ public class LASemanticUtils {
         if ((tipo1 == SymbolTable.TypeLAVariable.INTEIRO || tipo1 == SymbolTable.TypeLAVariable.REAL) &&
                 (tipo2 == SymbolTable.TypeLAVariable.INTEIRO || tipo2 == SymbolTable.TypeLAVariable.REAL))
             return true;
-        if ( 
+        if ( //verifica que o tipo1 é int, real, ou logico e o tipo2 é um endereço
                 (
                     tipo1 == SymbolTable.TypeLAVariable.PONT_INTE 
                     || 
@@ -379,7 +381,7 @@ public class LASemanticUtils {
         if (ctx.CADEIA() != null) {
             ret = SymbolTable.TypeLAVariable.LITERAL;
         } 
-        else {
+        else { //se começar em & ele verifica se eh endereco
             ret = verifyType(table, ctx.identificador());
             if (ctx.getText().contains("&")) {
                 return SymbolTable.TypeLAVariable.ENDERECO;
