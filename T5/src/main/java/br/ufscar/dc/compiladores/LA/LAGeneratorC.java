@@ -297,19 +297,65 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
                     if(!firstParameter){
                         output.append(",");
                     }
-                    if(!defineTypeAndAddtoScope(parameterIdentifier, variableType, functionScope)){
-                        
-                        if (globalScope.exists(variableType) && globalScope.check(
-                                    variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO){
-                            SymbolTableEntry fields = globalScope.check(variableType);
-                            SymbolTable nestedTableType = fields.argsRegFunc;
-
+                    switch (variableType) {
+                        case "inteiro":
                             functionScope.put(parameterIdentifier,
-                                    SymbolTable.TypeLAIdentifier.REGISTRO,
-                                    SymbolTable.TypeLAVariable.REGISTRO, nestedTableType,
-                                    variableType);
-                        }
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.INTEIRO);
+                            output.append("int " + parameterIdentifier);
+                            break;
+                        case "literal":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.LITERAL);
+                            output.append("char* " + parameterIdentifier);
+                            break;
+                        case "real":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.REAL);
+                            output.append("float " + parameterIdentifier);
+                            break;
+                        case "logico":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.LOGICO);
+                            output.append("boolean " + parameterIdentifier);
+                            break;
+                        case "^logico":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_LOGI);
+                            output.append("boolean* " + parameterIdentifier);
+                            break;
+                        case "^real":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_REAL);
+                            output.append("float* " + parameterIdentifier);
+                            break;
+                        case "^literal":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_LITE);
+                            output.append("boolean* " + parameterIdentifier);
+                        case "^inteiro":
+                            functionScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_INTE);
+                            output.append("int* " + parameterIdentifier);
+                        default:
+                            if (globalScope.exists(variableType) && globalScope.check(
+                                        variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO){
+                                SymbolTableEntry fields = globalScope.check(variableType);
+                                SymbolTable nestedTableType = fields.argsRegFunc;
 
+                                functionScope.put(parameterIdentifier,
+                                        SymbolTable.TypeLAIdentifier.REGISTRO,
+                                        SymbolTable.TypeLAVariable.REGISTRO, nestedTableType,
+                                        variableType);
+                            }
+                            break;
                     }
                     firstParameter = false;
 
@@ -337,27 +383,76 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
                     if(!firstParameter){
                         output.append(",");
                     }
-                    if(!defineTypeAndAddtoScope(parameterIdentifier, variableType, procScope)){
-                        if (globalScope.exists(variableType) && globalScope.check(
-                                    variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO){
-                            SymbolTableEntry fields = globalScope.check(variableType);
-                            SymbolTable nestedTableType = fields.argsRegFunc;
-
+                    switch (variableType) {
+                        case "inteiro":
                             procScope.put(parameterIdentifier,
-                                    SymbolTable.TypeLAIdentifier.REGISTRO,
-                                    SymbolTable.TypeLAVariable.REGISTRO, nestedTableType,
-                                    variableType);
-                        }
-                        
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.INTEIRO);
+                            output.append("int " + parameterIdentifier);
+                            break;
+                        case "literal":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.LITERAL);
+                            output.append("char* " + parameterIdentifier);
+                            break;
+                        case "real":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.REAL);
+                            output.append("float " + parameterIdentifier);
+                            break;
+                        case "logico":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.LOGICO);
+                            output.append("boolean " + parameterIdentifier);
+                            break;
+                        case "^logico":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_LOGI);
+                            output.append("boolean* " + parameterIdentifier);
+                            break;
+                        case "^real":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_REAL);
+                            output.append("float* " + parameterIdentifier);
+                            break;
+                        case "^literal":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_LITE);
+                            output.append("boolean* " + parameterIdentifier);
+                        case "^inteiro":
+                            procScope.put(parameterIdentifier,
+                                    SymbolTable.TypeLAIdentifier.VARIAVEL,
+                                    SymbolTable.TypeLAVariable.PONT_INTE);
+                            output.append("int* " + parameterIdentifier);
+                        default:
+                            if (globalScope.exists(variableType) && globalScope.check(
+                                        variableType).identifierType == SymbolTable.TypeLAIdentifier.TIPO){
+                                SymbolTableEntry fields = globalScope.check(variableType);
+                                SymbolTable nestedTableType = fields.argsRegFunc;
+
+                                procScope.put(parameterIdentifier,
+                                        SymbolTable.TypeLAIdentifier.REGISTRO,
+                                        SymbolTable.TypeLAVariable.REGISTRO, nestedTableType,
+                                        variableType);
+                            }
+                            break;
                     }
                     firstParameter = false;
                 }
             }
+            output.append(") {\n");
             
 
 
         }
-        
+        ctx.cmd().forEach(cmd->visitCmd(cmd));
+        output.append("}\n");
 
         return null;
     }
