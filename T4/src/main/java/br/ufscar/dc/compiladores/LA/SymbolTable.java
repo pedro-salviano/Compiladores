@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class SymbolTable {
 
-    public enum TypeLAVariable{
+    public enum TypeLAVariable{ //tipos de variavel em LA
         LITERAL,
         INTEIRO,
         REAL,
@@ -20,7 +20,7 @@ public class SymbolTable {
         REGISTRO
     }
 
-    public enum TypeLAIdentifier{
+    public enum TypeLAIdentifier{ //tipos de identificadores
         VARIAVEL,
         CONSTANTE,
         TIPO,
@@ -29,7 +29,7 @@ public class SymbolTable {
         REGISTRO
     }
 
-    private HashMap<String, SymbolTableEntry> symbolTable;
+    private HashMap<String, SymbolTableEntry> symbolTable; //tabela de simbolos em hashmap
     private SymbolTable global;
 
     public SymbolTable() {
@@ -37,10 +37,12 @@ public class SymbolTable {
         this.global = null;
     }
 
+    //define tabela de simbolos global
     void setGlobal(SymbolTable global){
         this.global = global;
     }
 
+    //add uma entrada na tabela de simbolos so com nome e tipo do identificador e variavel
     public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -49,6 +51,7 @@ public class SymbolTable {
         symbolTable.put(name, ste);
     }
 
+    //add na tabela de simbolos com nome e tipo do ident e variavel, e uma tabela de simbolos de argumentos 
     public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -58,6 +61,7 @@ public class SymbolTable {
         symbolTable.put(name, ste);
     }
 
+    //add na tabela de simbolos com nome e tipo do ident e variavel, uma tabela de simbolos de argumentos e o tipo de uma função
     public void put(String name, TypeLAIdentifier identifierType, TypeLAVariable variableType, SymbolTable argsRegFunc, String funcType) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -68,7 +72,7 @@ public class SymbolTable {
         symbolTable.put(name, ste);
     }
    
-    // returns true or false if an identifier exists in the table
+    // true ou false se o identificador existe na tabela de simbolos
     public boolean exists(String name) {
         if(global == null) {
             return symbolTable.containsKey(name);
@@ -76,8 +80,8 @@ public class SymbolTable {
             return symbolTable.containsKey(name) || global.exists(name);
         }
     }
-
-    // returns an entry of the symbol table given a name
+    
+    //retorna uma entrada da tabela de simbolos com tal nome
     public SymbolTableEntry check(String name) {
         if(global == null)
             return symbolTable.get(name);
@@ -88,8 +92,8 @@ public class SymbolTable {
                 return global.check(name);
         }
     }
-
-    // type validation for registers and functions
+    
+    //validacao de tipo para registradores e funcoes
     public boolean validType(ArrayList<SymbolTable.TypeLAVariable> types){
         int counter = 0;
         
