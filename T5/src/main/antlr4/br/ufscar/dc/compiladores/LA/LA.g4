@@ -12,8 +12,8 @@ IDENT:    [a-zA-Z][a-zA-Z0-9_]*; //define os tokens aceitos para um identificado
 CADEIA: ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* ('\'' | '"'); // cadeias devem ser iniciadas por ' ou ", ter o finalizador (ex: \n),
             // e fechar as aspas simples ou dupla para serem validas
 
-CADEIA_NAO_FECHADA: '"' ( ESC_SEQ | ~('"'|'\\') )* '\r'? '\n'?; // uma cadeia nao fechada eh aquela que abre as aspas
-           // dupla, mas nao as fecha
+CADEIA_NAO_FECHADA:  ('\'' | '"') (ESC_SEQ | ~('\n'|'\''|'\\'|'"'))* '\n'; // uma cadeia nao fechada eh aquela que abre as aspas
+           // simples ou dupla, mas nao as fecha
 
 COMENTARIO: '{' ~('}' | '\n' | '\r')*  '}' { skip(); }; //um comentario deve ser iniciado com {, que nao pode conter \n, \r e } dentro dele,
     // e deve ser fechado com }
@@ -42,7 +42,7 @@ FC: ']'; //fecha colchete
 
 
 fragment
-ESC_SEQ:    '\\\''; //aspas e barra
+ESC_SEQ:    '\\\'' | '\\n'; //barra e aspas ou barra n
 
 WS: (' '|'\t'|'\r'|'\n') { skip(); };
     // \n pula para a proxima linha

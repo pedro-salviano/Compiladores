@@ -375,12 +375,16 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
     public Void visitCmdAtribuicao(CmdAtribuicaoContext ctx){
         var currentScope = nestedScopes.getCurrentScope();
 
-        if(ctx.getText().contains("^"))
-            output.append("*");
-        try{
-            SymbolTable.TypeLAVariable variableType = currentScope.check(ctx.identificador().getText()).variableType;
+        String[] atribuition = ctx.getText().split("<-");
 
-            if(variableType != null && variableType == SymbolTable.TypeLAVariable.LITERAL){
+        try{
+            if(atribuition[0].contains("^")){
+                output.append("*");
+            }
+            SymbolTable.TypeLAVariable variableType = LASemanticUtils.verifyType(currentScope, ctx.identificador());
+            
+
+            if(variableType == SymbolTable.TypeLAVariable.LITERAL){
                 // output.append("strcpy(" + ctx.identificador().getText()+","+ctx.expressao().getText()+");\n");
                 output.append("strcpy(");
                 visitIdentificador(ctx.identificador());
@@ -393,10 +397,10 @@ public class LAGeneratorC extends LABaseVisitor<Void> {
                 output.append(ctx.expressao().getText());
                 output.append(";\n");
             }
+        } catch(Exception e) {
+            output.append(e.getMessage());
         }
-        catch(Exception e){
-            System.out.println(e.getMessage() +  " q ocorreu");
-        }
+        
         return null;
     }
 
