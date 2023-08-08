@@ -1,4 +1,4 @@
-nomePessoa, cpf , altura, peso 
-pessoa1, 123.456.789-00, 1.70, 60.00
-pessoa2, 001.234.567-89, 1.65, 50.01
+nomePessoa, cpf , altura, peso , telefone, 
+pessoa1, 123.456.789-00, 1.70, 60.00, 1
+pessoa2, 001.234.567-89, 1.65, ,   \n
 
