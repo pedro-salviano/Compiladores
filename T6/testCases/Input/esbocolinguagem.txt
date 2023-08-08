@@ -1,0 +1,19 @@
+pessoa {
+    id: serial PK
+    nome: string(65)
+    telefone: string(10) 
+    [
+        min-length 2
+        max-length 10
+        mascara "/d/d"
+    ]
+    id_curso: ref curso(id)
+}
+
+curso {
+    id: serial PK
+}
+
+verificar {
+    "/users/pedro/arq.csv" -> pessoa
+}
