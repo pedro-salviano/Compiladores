@@ -4,7 +4,7 @@ package br.ufscar.dc.compiladores.LA;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
     
-public class LAvisitor extends LABaseVisitor<Void> {
+public class AnalisadorSemantico extends LABaseVisitor<Void> {
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 

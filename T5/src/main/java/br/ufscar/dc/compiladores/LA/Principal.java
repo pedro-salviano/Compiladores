@@ -70,7 +70,7 @@ public class Principal {
                         ProgramaContext programa = parser.programa();  
                         
                         // Inicializa o Visitor Semântico, LAvisitor, para realizar a análise semântica
-                        LAvisitor semantic = new LAvisitor();
+                        AnalisadorSemantico semantic = new AnalisadorSemantico();
 
                         // Executa a análise semântica
                         semantic.visitPrograma(programa); 

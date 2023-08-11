@@ -67,8 +67,8 @@ public class Principal {
                         // Executa a análise sintática, construindo a árvore de análise
                         var programa = parser.programa();  
                         
-                        // Inicializa o Visitor Semântico, LAvisitor, para realizar a análise semântica
-                        LAvisitor semantic = new LAvisitor();
+                        // Inicializa o Visitor Semântico, AnalisadorSemantico, para realizar a análise semântica
+                        AnalisadorSemantico semantic = new AnalisadorSemantico();
 
                         // Executa a análise semântica
                         semantic.visitPrograma(programa); 

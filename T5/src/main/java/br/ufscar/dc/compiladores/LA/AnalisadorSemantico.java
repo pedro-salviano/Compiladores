@@ -19,7 +19,7 @@ import br.ufscar.dc.compiladores.LA.LAParser.VariavelContext;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
     
-public class LAvisitor extends LABaseVisitor<Void> {
+public class AnalisadorSemantico extends LABaseVisitor<Void> {
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 
