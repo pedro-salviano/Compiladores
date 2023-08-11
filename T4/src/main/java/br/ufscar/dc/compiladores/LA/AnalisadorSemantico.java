@@ -19,7 +19,7 @@ import br.ufscar.dc.compiladores.LA.LAParser.VariavelContext;
 import br.ufscar.dc.compiladores.LA.SymbolTable.TypeLAVariable;
 
     
-public class LAvisitor extends LABaseVisitor<Void> { //verifica semantica em cada nivel da arvore sintatica
+public class AnalisadorSemantico extends LABaseVisitor<Void> { //verifica semantica em cada nivel da arvore sintatica
     Scopes nestedScopes = new Scopes();
     SymbolTable symbolTable;
 
