@@ -54,7 +54,10 @@ script:
     definicao+ execucao;
 
 execucao:
-    CHECK AC CADEIA OPERADOR IDENT FC;
+    CHECK AC checagem+ FC;
+
+checagem:
+    CADEIA OPERADOR IDENT;
 
 definicao:
     IDENT AC corpo FC;

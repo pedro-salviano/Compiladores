@@ -1,6 +1,16 @@
 pessoa {
     id: inteiro PK
     nome: string(65)
+    nome: string(65)
+    telefone: string(10)
+    idade: inteiro
+    renda: real 
+}
+
+pessoa {
+    id: inteiro PK
+    nome: string(65)
+    nome: string(65)
     telefone: string(10)
     idade: inteiro
     renda: real 
@@ -13,5 +23,5 @@ curso {
 }
 
 verificar {
-    "stringqualquer" -> pessoa
+    "stringqualquer" -> pessa
 }

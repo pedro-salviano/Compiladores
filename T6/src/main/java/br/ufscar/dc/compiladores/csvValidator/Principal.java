@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import br.ufscar.dc.compiladores.csvValidator.csvValidatorParser.ScriptContext;
+
 public class Principal {
     public static void main(String args[]) {
 
@@ -41,14 +43,40 @@ public class Principal {
                         }
                     }
                     if(procede){
+                        // Reseta o léxico para reiniciar a análise
                         lex.reset();
-                        CommonTokenStream tokens = new CommonTokenStream(lex); 
-                        csvValidatorParser parser = new csvValidatorParser(tokens); // Inicializa o parser semantico, com os tokens
-                        SyntaxErrorListener mcel = new SyntaxErrorListener();   //Inicializa o listener sintatico
-                        parser.removeErrorListeners();
-                        parser.addErrorListener(mcel);    //Adiciona o listener sintatico
 
-                        parser.script();  //Executa a analise sintatica, construindo arvore
+                        // Cria o fluxo de tokens a partir do léxico 
+                        CommonTokenStream tokens = new CommonTokenStream(lex); 
+
+                        // Inicializa o parser semântico com os tokens
+                        csvValidatorParser parser = new csvValidatorParser(tokens);
+
+                        // Inicializa o listener sintático
+                        SyntaxErrorListener mcel = new SyntaxErrorListener();  
+                        parser.removeErrorListeners();
+
+                        // Adiciona o listener sintatico
+                        parser.addErrorListener(mcel);    
+
+                        // Executa a análise sintática, construindo a árvore de análise
+                        ScriptContext programa = parser.script();  
+                        
+                        // Inicializa o Visitor Semântico, para realizar a análise semântica
+                        csvVisitor semantic = new csvVisitor();
+
+                        // Executa a análise semântica
+                        semantic.visitScript(programa); 
+
+                        // Verifica se há erros semânticos
+                        if(!csvValidatorSemanticUtils.semanticErrors.isEmpty()){
+
+                            //Percorre os erros semânticos e os imprime no arquivo
+                            for(String s: csvValidatorSemanticUtils.semanticErrors){
+                                pw.write(s);
+                            }
+                            pw.write("Fim da compilacao\n");
+                        }
                     }
                 }   catch (ParseCancellationException e){
                     pw.println(e.getMessage());

@@ -1,0 +1,4 @@
+Linha 4: identifier nome ja declarado anteriormente
+Linha 10: identifier pessoa ja declarado anteriormente
+Linha 26: definicao pessa nao criada
+Fim da compilacao
