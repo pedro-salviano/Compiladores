@@ -8,22 +8,21 @@ import br.ufscar.dc.compiladores.csvValidator.SymbolTable.TypeCSVIdent;
 
 public class csvVisitor extends csvValidatorBaseVisitor<Void>{
     Scopes nestedScopes = new Scopes();
-    SymbolTable symbolTable;
 
     //define o tipo e add ao escopo
-    Boolean defineTypeAndAddtoScope(String variableIdentifier, String variableType, SymbolTable symbolTable, int size){
+    Boolean defineTypeAndAddtoScope(String variableIdentifier, String variableType, SymbolTable symbolTable, int size, boolean regra){
         switch (variableType) {
             case "inteiro":
-                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.INTEIRO);
+                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.INTEIRO, regra);
                 break;
             case "string":
-                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.LITERAL, size);
+                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.LITERAL, regra, size);
                 break;
             case "real":
-                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.REAL);
+                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.REAL, regra);
                 break;
             case "booleano":
-                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.BOOLEANO);
+                symbolTable.put(variableIdentifier, TypeCSVIdent.ATRIBUTO, TypeCSVAtribute.BOOLEANO, regra);
                 break;
             default:
                 return false;
@@ -60,17 +59,26 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
                         "identifier " + identAtributo + " ja declarado anteriormente\n");
                 }
                 else{
+                    boolean regra = atributo.REGRA() != null ? true: false;
+                    if(definicaoScope.existeRegra() != regra){
+
+                    }
+                    else{
+                        csvValidatorSemanticUtils.addSemanticError(atributo.IDENT().getSymbol(),
+                        "O atributo" + atributo.IDENT().getText() + "nao pode ter regra outro atributo já possui regra PK \n");
+                    }
+
                     if(atributo.tipo().literal() != null){
                         String tipoAtributo = atributo.tipo().literal().DEFINE_STRING().getText();
                         int tamanho = Integer.parseInt(atributo.tipo().literal().tamanho().NUM_INT_POS().getText());
-                        if(!defineTypeAndAddtoScope(identAtributo, tipoAtributo, definicaoScope, tamanho)){
+                        if(!defineTypeAndAddtoScope(identAtributo, tipoAtributo, definicaoScope, tamanho, regra)){
                             csvValidatorSemanticUtils.addSemanticError(atributo.IDENT().getSymbol(),
                             "tipo " + tipoAtributo + "nao reconhecido \n");
                         }
                     }
                     else{
                         String tipoAtributo = atributo.tipo().getText();
-                        if(!defineTypeAndAddtoScope(identAtributo, tipoAtributo, definicaoScope, 0)){
+                        if(!defineTypeAndAddtoScope(identAtributo, tipoAtributo, definicaoScope, 0, regra)){
                             csvValidatorSemanticUtils.addSemanticError(atributo.IDENT().getSymbol(),
                             "tipo " + tipoAtributo + "nao reconhecido \n");
                         }

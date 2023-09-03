@@ -1,4 +1,7 @@
-nomePessoa, cpf , altura, peso , telefone
-pessoa1, 123.456.789-00, 1.70, 60.00, 1
-pessoa2, 001.234.567-89, 1.65, ,   
+id, nome , telefone, idade, renda
+1, pedro, 99999-9999, 21, 1000.01
+2, ana, 88888-8888, 20, 1000
+2, ana, 77777-8888, vinte, 10 
 
+4, joao, 99999-9999, 20, 
+ , joaquina, 1111-1111, 40, 99.99

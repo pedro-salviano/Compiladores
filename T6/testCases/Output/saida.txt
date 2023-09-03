@@ -1,0 +1,4 @@
+Entrada duplicada, para atributo com regra PK: 2 
+Entrada inválida, atributo id nao pode ser vazio
+Entrada inválida, atributo id nao pode ser vazio
+Fim da inspecao

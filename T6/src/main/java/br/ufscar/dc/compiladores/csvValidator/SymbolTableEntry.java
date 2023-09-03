@@ -5,6 +5,7 @@ public class SymbolTableEntry {
     public SymbolTable.TypeCSVIdent identType;
     public SymbolTable.TypeCSVAtribute variableType; //tipo de variavel
     public int size;
+    public boolean regra;
 
     public SymbolTable definicaoAtributos;
 

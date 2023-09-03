@@ -66,7 +66,11 @@ public class Principal {
                         csvVisitor semantic = new csvVisitor();
 
                         // Executa a análise semântica
-                        semantic.visitScript(programa); 
+                        semantic.visitScript(programa);
+                        
+                        validator inspetor = new validator();
+
+                        inspetor.inicia(semantic.nestedScopes, programa);
 
                         // Verifica se há erros semânticos
                         if(!csvValidatorSemanticUtils.semanticErrors.isEmpty()){
@@ -76,6 +80,13 @@ public class Principal {
                                 pw.write(s);
                             }
                             pw.write("Fim da compilacao\n");
+                        }
+
+                        if(!validator.ExecutionErrors.isEmpty()){
+                            for(String s: validator.ExecutionErrors){
+                                pw.write(s);
+                            }
+                            pw.write("Fim da inspecao\n");
                         }
                     }
                 }   catch (ParseCancellationException e){

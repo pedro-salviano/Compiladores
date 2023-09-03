@@ -10,7 +10,7 @@ REGRA:
 
 NUM_INT_POS:    DIGITO+; //numeros inteiros nao tem virgula
 
-NUM_REAL:   DIGITO+ '.' DIGITO+; //numeros reais tem virgula
+NUM_REAL:   DIGITO+ '.'+ DIGITO+; //numeros reais tem virgula
 
 fragment
 DIGITO: ('0'..'9'); //define que digitos so podem ser compostos por numeros

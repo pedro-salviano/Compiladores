@@ -19,10 +19,12 @@ public class SymbolTable {
 
     private HashMap<String, SymbolTableEntry> symbolTable; //tabela de simbolos em hashmap
     private SymbolTable global;
+    private boolean existeRegra;
 
     public SymbolTable() {
         this.symbolTable = new HashMap<>();
         this.global = null;
+        this.existeRegra = false;
     }
 
     //define tabela de simbolos global
@@ -30,29 +32,33 @@ public class SymbolTable {
         this.global = global;
     }
 
-    public void put(String name, TypeCSVIdent identType) {
-        SymbolTableEntry ste = new SymbolTableEntry();
-        ste.name = name;
-        ste.identType = identType;
-        symbolTable.put(name, ste);
-    }
 
     //add uma entrada na tabela de simbolos so com nome e tipo do identificador e variavel
-    public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType) {
+    public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, boolean regra) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
         ste.identType = identType;
         ste.variableType = variableType;
+        ste.regra = regra;
         symbolTable.put(name, ste);
+
+        if(regra){
+            this.existeRegra = true;
+        }
     }
 
-    public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, int size) {
+    public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, boolean regra, int size) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
         ste.identType = identType;
         ste.variableType = variableType;
+        ste.regra = regra;
         ste.size = size;
         symbolTable.put(name, ste);
+
+        if(regra){
+            this.existeRegra = true;
+        }
     }
 
     public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, SymbolTable definicaoAtributos) {
@@ -100,5 +106,12 @@ public class SymbolTable {
         
         return true;
     }
+
+    public int size(){
+        return symbolTable.size();
+    }
     
+    public boolean existeRegra(){
+        return existeRegra;
+    }
 }

@@ -13,5 +13,5 @@ curso {
 }
 
 verificar {
-    "/users/pedro/arq.csv" -> pessoa
+    "./testCases/Input/pessoa.csv" -> pessoa
 }
