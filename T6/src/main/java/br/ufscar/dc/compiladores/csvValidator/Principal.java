@@ -36,10 +36,6 @@ public class Principal {
                             procede = false;
                             throw new ParseCancellationException("Linha " + t.getLine() + ": cadeia literal nao fechada");
                             
-                        } else if(nomeToken.equals("COMENTARIO_NAO_FECHADO")) { // comentario nao fechado
-                            procede = false;
-                            throw new ParseCancellationException("Linha " + t.getLine() + ": comentario nao fechado");
-                            
                         }
                     }
                     if(procede){
@@ -67,10 +63,7 @@ public class Principal {
 
                         // Executa a análise semântica
                         semantic.visitScript(programa);
-                        
-                        validator inspetor = new validator();
-
-                        inspetor.inicia(semantic.nestedScopes, programa);
+                    
 
                         // Verifica se há erros semânticos
                         if(!csvValidatorSemanticUtils.semanticErrors.isEmpty()){
@@ -80,14 +73,19 @@ public class Principal {
                                 pw.write(s);
                             }
                             pw.write("Fim da compilacao\n");
-                        }
+                        }else{
+                            validator inspetor = new validator();
 
-                        if(!validator.ExecutionErrors.isEmpty()){
-                            for(String s: validator.ExecutionErrors){
+                            inspetor.inicia(semantic.nestedScopes, programa);
+                            if(!validator.ExecutionErrors.isEmpty()){
+                                for(String s: validator.ExecutionErrors){
                                 pw.write(s);
+                                }
                             }
                             pw.write("Fim da inspecao\n");
                         }
+
+                        
                     }
                 }   catch (ParseCancellationException e){
                     pw.println(e.getMessage());

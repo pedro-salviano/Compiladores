@@ -1,0 +1,2 @@
+Entrada duplicada, para atributo com regra PK: compila1 
+Fim da inspecao

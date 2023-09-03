@@ -1,0 +1,2 @@
+Linha 3: O atributo nome nao pode ter regra, pois outro atributo já possui regra PK 
+Fim da compilacao

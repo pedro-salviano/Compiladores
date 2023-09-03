@@ -1,23 +1,18 @@
 pessoa {
     id: inteiro PK
     nome: string(65)
-    nome: string(65)
     telefone: string(10)
     idade: inteiro
     renda: real 
 }
 
-pessoa {
-    id: inteiro PK
-    curso: string(20) 
-}
-
 curso {
-    id: inteiro PK
+    id: inteiro
     nome: string(65)
-    cod: string(8)
+    cod: string(8) PK
+    ativo: booleano
 }
 
 verificar {
-    "pessoa2.csv" -> pessa
+    "./testCases/Input/curso.csv" -> curso
 }

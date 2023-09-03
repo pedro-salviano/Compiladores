@@ -70,7 +70,7 @@ public class validator extends csvValidatorBaseVisitor<Void>{
                         String[] Cells = line.split(",");
 
                         for(String cell: Cells){
-                            SymbolTableEntry atributo = tabelaDefinicao.check(HeaderCells[columnIndex]);
+                            SymbolTableEntry atributo = tabelaDefinicao.check(HeaderCells[columnIndex].replaceAll(" ", ""));
                             
                             if(atributo != null){
 
@@ -119,26 +119,31 @@ public class validator extends csvValidatorBaseVisitor<Void>{
                 try {
                     Integer.parseInt(cell);
                 } catch (Exception e) {
-                    addExecutionError("Atributo definido como inteiro" +e.toString()+ "\n");
+                    addExecutionError("Atributo definido como inteiro mas o valor preenchido foi '" +cell+ "'\n");
                 }
                 break;
             case REAL:
                 try {
                     Float.parseFloat(cell);
                 } catch (Exception e) {
-                    addExecutionError("Atributo definido como real" +e.toString()+"\n");
+                    addExecutionError("Atributo definido como real mas o valor preenchido foi '" +cell+"'\n");
                 }
+                break;
             case BOOLEANO:
                 try {
                     Boolean.parseBoolean(cell);
                 } catch (Exception e) {
-                    addExecutionError("Atributo definido como booleano" +e.toString()+"\n");
+                   
+                   addExecutionError("Atributo definido como booleano mas o valor preenchido foi '" +cell+"'\n");
                 }
+                break;
             case LITERAL:
                 if(cell.length() > atributo.size){
-                    addExecutionError("Atributo Literal com tamanho maior que o definido para o atributo \n");
+                    addExecutionError("Atributo Literal " + cell + " com tamanho maior que o definido para o atributo \n");
                 }
+                break;
             default:
+                addExecutionError(String.format("foi impossivel determinar o tipo %s para a celula %s \n"  , atributo.name, cell));
                 break;
         }
 

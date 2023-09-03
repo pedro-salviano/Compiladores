@@ -60,12 +60,10 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
                 }
                 else{
                     boolean regra = atributo.REGRA() != null ? true: false;
-                    if(definicaoScope.existeRegra() != regra){
 
-                    }
-                    else{
+                    if(definicaoScope.existeRegra() && regra){
                         csvValidatorSemanticUtils.addSemanticError(atributo.IDENT().getSymbol(),
-                        "O atributo" + atributo.IDENT().getText() + "nao pode ter regra outro atributo já possui regra PK \n");
+                        "O atributo " + atributo.IDENT().getText() + " nao pode ter regra, pois outro atributo já possui regra PK \n");
                     }
 
                     if(atributo.tipo().literal() != null){

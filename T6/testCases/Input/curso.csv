@@ -1,0 +1,9 @@
+id,nome,cod,ativo
+1,compila,compila1,true
+2,comp,compila2,True
+3,com,compila3,TrUe
+4,co,compila4,qualqueroutracoisaefalso
+5,c,compila5,cfc
+6,es2,es2,false
+7,bd,bd,flso
+8,compila,compila1,true

@@ -1,4 +1,6 @@
 Entrada duplicada, para atributo com regra PK: 2 
+Atributo definido como inteiro mas o valor preenchido foi 'vinte'
 Entrada inválida, atributo id nao pode ser vazio
-Entrada inválida, atributo id nao pode ser vazio
+Atributo Literal com tamanho maior que o definido para o atributo 
+Atributo definido como real mas o valor preenchido foi 'cem reais'
 Fim da inspecao
