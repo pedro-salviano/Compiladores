@@ -14,32 +14,38 @@ import br.ufscar.dc.compiladores.csvValidator.csvValidatorParser.ScriptContext;
 public class validator extends csvValidatorBaseVisitor<Void>{
     public static List<String> ExecutionErrors = new ArrayList<>();
     
-    // Adiciona um erro semântico à lista de erros. Recebe um Token e uma 
+    // Adiciona um erro à lista de erros. Recebe um Token e uma 
     // mensagem como parâmetros, obtém o número da linha do token e adiciona 
     // o erro formatado à lista.
     public static void addExecutionError(int line, String msg) {
         ExecutionErrors.add(String.format("Linha %d: %s", line, msg));
     }
 
+    // Adicioa apena uma mensagem, sem linha, a lista de erros
     public static void addExecutionError(String msg) {
         ExecutionErrors.add(String.format("%s", msg));
     }
 
+    // Cria a tabela de escopos
     Scopes nestedScopes = new Scopes();
 
+    // Inicia a validacao, trazendo a tabela do semantico
     public void inicia(Scopes escopo, ScriptContext programa ){
         nestedScopes = escopo;
 
         visitScript(programa);
     }
 
+    // Valida se a planilha tem um formato valido como definidio no arquivo validado até a análise semantica
     @Override
     public Void visitExecucao(csvValidatorParser.ExecucaoContext ctx){
+
         if (nestedScopes.runNestedScopes().size() > 1) {
             nestedScopes.giveupScope();
         }
         SymbolTable globalScope = nestedScopes.getCurrentScope();
 
+        // Para cada checagem na lista de analise.
         for(csvValidatorParser.ChecagemContext checagem: ctx.checagem()){
             String caminho = checagem.CADEIA().getText().replaceAll("\"", "");
             SymbolTable tabelaDefinicao = globalScope.check(checagem.IDENT().getText()).definicaoAtributos;
@@ -49,12 +55,13 @@ public class validator extends csvValidatorBaseVisitor<Void>{
                 String line = reader.readLine();
                 String[] HeaderCells = line.split(",");
 
-
+                // Checa se a tabela possui a mesma quantidade de colunas que os atributos definidos
                 if(! (tabelaDefinicao.size() == HeaderCells.length)){
                     addExecutionError(checagem.IDENT().getSymbol().getLine(), 
                     "Cabecalho possui um numero diferente de colunas da quantidade de atributos definidos \n");
                 }
                 else{
+                    // Checa se a coluna é um atributo definido
                     for(String atributo: HeaderCells){
                         if(!tabelaDefinicao.exists(atributo.replaceAll(" ", ""))){
                             addExecutionError(checagem.IDENT().getSymbol().getLine(), 
@@ -62,6 +69,7 @@ public class validator extends csvValidatorBaseVisitor<Void>{
                         }
                     }
 
+                    // Para cada linha checa se os valores são valores válidos para a definicao do atributo
                     List<String> uniqueValues = new ArrayList<>();
                     line = reader.readLine();
                     while(line != null){
@@ -74,6 +82,7 @@ public class validator extends csvValidatorBaseVisitor<Void>{
                             
                             if(atributo != null){
 
+                                // Se o atributo foi definido com regra PK, faz as checagens de unicidade e se o valor não é vazio 
                                 if(atributo.regra){
                                     if(cell.replaceAll(" ", "").length() > 0){
                                         if(uniqueValues.contains(cell)){
@@ -113,6 +122,7 @@ public class validator extends csvValidatorBaseVisitor<Void>{
         return super.visitExecucao(ctx);
     }
 
+    // Checa se o valor é válido para o tipo definido
     void checkType(String cell, SymbolTableEntry atributo){
         switch (atributo.variableType) {
             case INTEIRO:
