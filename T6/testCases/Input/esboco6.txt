@@ -1,0 +1,9 @@
+curso {
+    id: inteiro
+    nome: string(65)
+    cod: string(8) 
+}
+
+verificar {
+    "./testCases/Input/curso.csv" -> curso
+}
