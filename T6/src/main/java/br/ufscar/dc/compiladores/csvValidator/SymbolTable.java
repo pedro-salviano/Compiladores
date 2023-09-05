@@ -1,6 +1,5 @@
 package br.ufscar.dc.compiladores.csvValidator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SymbolTable {
@@ -33,7 +32,7 @@ public class SymbolTable {
     }
 
 
-    //add uma entrada na tabela de simbolos so com nome e tipo do identificador e variavel
+    //add uma entrada na tabela de simbolos so com nome, tipo do identificador, tipo da variavel, e se possui regra PK
     public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, boolean regra) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -47,6 +46,7 @@ public class SymbolTable {
         }
     }
 
+    //add uma entrada na tabela de simbolos so com nome, tipo do identificador, tipo da variavel, se possui regra PK, e o tamanho (usada para inserir literais)
     public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, boolean regra, int size) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -61,6 +61,7 @@ public class SymbolTable {
         }
     }
 
+    //add uma entrada na tabela de simbolos so com nome, tipo do identificador, tipo da variavel e tabela (usado para inserir definicoes no escopo global)
     public void put(String name, TypeCSVIdent identType, TypeCSVAtribute variableType, SymbolTable definicaoAtributos) {
         SymbolTableEntry ste = new SymbolTableEntry();
         ste.name = name;
@@ -90,27 +91,13 @@ public class SymbolTable {
                 return global.check(name);
         }
     }
-    
-    //validacao de tipo para registradores e funcoes
-    public boolean validType(ArrayList<SymbolTable.TypeCSVAtribute> types){
-        int counter = 0;
-        
-        if(symbolTable.size() != types.size())
-            return false;
-        for(SymbolTableEntry entry: symbolTable.values()){
-            if(types.get(counter) != entry.variableType){
-                return false;
-            }
-            counter++;
-        }
-        
-        return true;
-    }
 
+    // checa a quantidade de elementos na tabela 
     public int size(){
         return symbolTable.size();
     }
     
+    // Checa se na tabela atual já existe alguma coluna com regra PK
     public boolean existeRegra(){
         return existeRegra;
     }

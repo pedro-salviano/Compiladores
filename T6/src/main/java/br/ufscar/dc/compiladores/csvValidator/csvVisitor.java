@@ -30,6 +30,7 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
         return true;
     }
 
+    //Visita a definição do formato de uma tabela
     @Override
     public Void visitDefinicao(csvValidatorParser.DefinicaoContext ctx){
         String identifier = ctx.IDENT().getText();
@@ -39,17 +40,22 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
         }
         SymbolTable globalScope = nestedScopes.getCurrentScope();
 
+        // Checa se já existe um formato de tabela definido com o mesmo nome
         if(globalScope.exists(identifier)){
             csvValidatorSemanticUtils.addSemanticError(ctx.IDENT().getSymbol(),
                 "identifier " + identifier + " ja declarado anteriormente\n");
         }
         else{
+            // Caso negativo, começa o processo de definir esse formato e adicionar à tabela. 
+
+            // Cria um escopo (escopo da definicao)
             nestedScopes.createNewScope();
             SymbolTable definicaoScope = nestedScopes.getCurrentScope();
-            definicaoScope.setGlobal(globalScope);
+            definicaoScope.setGlobal(globalScope); // Define o escopo global, ao qual o escopo definicaoScope pertence
 
-            globalScope.put(identifier, SymbolTable.TypeCSVIdent.DEFINICAO, null, definicaoScope);
+            globalScope.put(identifier, SymbolTable.TypeCSVIdent.DEFINICAO, null, definicaoScope); // O identifier (nome do formato de tabela) ao escopo global
             
+            // Para cada atributo/coluna definido faz as verificações semânticas necessárias
             for(csvValidatorParser.AtributoContext atributo: ctx.corpo().atributo()){
                 String identAtributo = atributo.IDENT().getText();
                   
@@ -59,13 +65,16 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
                         "identifier " + identAtributo + " ja declarado anteriormente\n");
                 }
                 else{
+                    // A coluna sendo analisada possui a regra PK?
                     boolean regra = atributo.REGRA() != null ? true: false;
 
+                    // Apenas uma coluna na tabela pode ter PK
                     if(definicaoScope.existeRegra() && regra){
                         csvValidatorSemanticUtils.addSemanticError(atributo.IDENT().getSymbol(),
                         "O atributo " + atributo.IDENT().getText() + " nao pode ter regra, pois outro atributo já possui regra PK \n");
                     }
 
+                    // Faz a inserção dependendo do tipo, uma vez que o tipo literal tem tamanho maximo
                     if(atributo.tipo().literal() != null){
                         String tipoAtributo = atributo.tipo().literal().DEFINE_STRING().getText();
                         int tamanho = Integer.parseInt(atributo.tipo().literal().tamanho().NUM_INT_POS().getText());
@@ -89,6 +98,7 @@ public class csvVisitor extends csvValidatorBaseVisitor<Void>{
         return super.visitDefinicao(ctx);
     }
 
+    // Visita o trecho de execucao do analisador, para cada csv/linha checa se a definiçao de tabela referenciada existe na tabela de simbolos/escopo global
     @Override
     public Void visitExecucao(csvValidatorParser.ExecucaoContext ctx){
         if (nestedScopes.runNestedScopes().size() > 1) {

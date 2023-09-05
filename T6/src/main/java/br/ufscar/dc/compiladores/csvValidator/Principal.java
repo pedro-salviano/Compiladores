@@ -74,9 +74,12 @@ public class Principal {
                             }
                             pw.write("Fim da compilacao\n");
                         }else{
+                            // Caso não possua nenhum erro, faz a inspecao/validacao dos csvs
                             validator inspetor = new validator();
 
                             inspetor.inicia(semantic.nestedScopes, programa);
+
+                            // A validacao retorna os erros encontrados no csv
                             if(!validator.ExecutionErrors.isEmpty()){
                                 for(String s: validator.ExecutionErrors){
                                 pw.write(s);
