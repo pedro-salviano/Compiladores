@@ -1,5 +1,9 @@
-# Contribuições são bem-vindas
-ANTLR4 implemented csv validator
+# ANTLR4 implemented csv validator
+Contribuições são bem-vindas
+
+O intuito do csv Validator é a partir de uma entrada textual no formato apresentado ao final desse documento,
+conseguir avaliar se o csv possui em sua totalidade uma estrutura válida, se há duplicação de chaves únicas
+e há entradas com chaves vazias
 
 # Trabalho 6 - csvValidator 
 
@@ -50,6 +54,8 @@ IDENT {
 verificar {
     (CADEIA -> IDENT)+
 }
+
+Sem os símbolos + (1 ou mais entradas do tipo), parenteses, e ? (opcional)
 
 O arquivo de input pode criar várias definiçoes e validar multiplos csvs contra as multiplas definicoes.
 Os tipos válidos são inteiro, real, booelano e string(tamanho em chars)
