@@ -1,0 +1,13 @@
+curso {
+    id: inteiro PK
+    nome: string(65)
+    id: inteiro PK
+}
+
+curso {
+    cod: string(8)
+}
+
+verificar {
+    "./testCases/Input/curso.csv" -> curso
+}

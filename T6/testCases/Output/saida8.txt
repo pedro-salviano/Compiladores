@@ -1,0 +1,4 @@
+Atributo Literal  nomeGrande com tamanho maior que o definido para o atributo 
+Atributo definido como inteiro mas o valor preenchido foi '10 anos'
+Atributo definido como real mas o valor preenchido foi '100.1.1'
+Fim da inspecao

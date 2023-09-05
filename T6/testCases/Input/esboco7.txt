@@ -1,0 +1,11 @@
+pessoa {
+    id: inteiro PK
+    nome: string(1)
+    telefone: string(10)
+    idade: inteiro
+    renda: real 
+}
+
+verificar {
+    "./testCases/Input/pessoa.csv" -> pessoa
+}
