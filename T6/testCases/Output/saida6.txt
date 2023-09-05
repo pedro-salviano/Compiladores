@@ -1,0 +1,2 @@
+Linha 8: Cabecalho possui um numero diferente de colunas da quantidade de atributos definidos 
+Fim da inspecao

@@ -1,0 +1,13 @@
+Atributo Literal pedro com tamanho maior que o definido para o atributo 
+Atributo Literal ana com tamanho maior que o definido para o atributo 
+Entrada duplicada, para atributo com regra PK: 2 
+Atributo Literal ana com tamanho maior que o definido para o atributo 
+Atributo definido como inteiro mas o valor preenchido foi 'vinte'
+Atributo Literal jorge com tamanho maior que o definido para o atributo 
+Atributo Literal joao com tamanho maior que o definido para o atributo 
+Entrada inválida, atributo id nao pode ser vazio
+Atributo Literal joaquina com tamanho maior que o definido para o atributo 
+Atributo Literal medeiros com tamanho maior que o definido para o atributo 
+Atributo Literal 01234-56789000 com tamanho maior que o definido para o atributo 
+Atributo definido como real mas o valor preenchido foi 'cem reais'
+Fim da inspecao
