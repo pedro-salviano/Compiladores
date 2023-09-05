@@ -1,0 +1,21 @@
+pessoa {
+    id: inteiro PK
+    nome: string(65) PK
+    telefone: string(10)
+    idade: inteiro
+    renda: real 
+}
+
+curso {
+    id: inteiro
+    nome: string(65)
+    cod: string(8) PK
+}
+
+tabelaqualquer {
+
+}
+
+verificar {
+    "./testCases/Input/curso.csv" -> curso
+}

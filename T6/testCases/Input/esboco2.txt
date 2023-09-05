@@ -1,0 +1,23 @@
+pessoa {
+    id: inteiro PK
+    nome: string(65)
+    nome: string(65)
+    telefone: string(10)
+    idade: inteiro
+    renda: real 
+}
+
+pessoa {
+    id: inteiro PK
+    curso: string(20) 
+}
+
+curso {
+    id: inteiro PK
+    nome: string(65)
+    cod: string(8)
+}
+
+verificar {
+    "pessoa2.csv" -> pessa
+}
