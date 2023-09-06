@@ -37,7 +37,7 @@ java -jar  csvValidator-0.1-jar-with-dependencies.jar <input> <output>
 ```
 Ex - chamando a partir de Compiladores/T6:
 ```
-java -jar  ./target/csvValidator-0.1-jar-with-dependencies.jar ./testCases/Input/esbocolinguagem.txt ./testCases/Output/saida.txt
+java -jar  ./target/csvValidator-0.1-jar-with-dependencies.jar ./testCases/Input/esboco1.txt ./testCases/Output/saida1.txt
 ```
 
 O arquivo em input precisa ser um arquivo válido e deve conter a seguinte estrutura: 
